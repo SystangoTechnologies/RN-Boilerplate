@@ -1,0 +1,14 @@
+{
+  "LIVE":{
+    "baseurl":"",
+    "issequire":true 
+  },
+  "STAGING":{
+    "baseurl":"",
+    "issequire":true 
+  },
+  "DEVELOPMENT":{
+    "baseurl":"",
+    "issequire":true 
+  }
+}
