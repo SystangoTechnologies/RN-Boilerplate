@@ -1,11 +1,16 @@
 import { Dimensions } from 'react-native';
-const { height } = Dimensions.get('window');
-import * as CONST from '../utils/Const';
+import * as CONST from './constants';
+
+const { height, width } = Dimensions.get('window');
 
 /**
  * Function to scale a value based on the size of the screen size and the original
  * size used on the design.
  */
-export default function( units = 1 ) {
-	return ( (units) * height ) / CONST.SCREEN_HEIGHT;
+export default function (units = 1) {
+  return (width / CONST.SCREEN_WIDTH) * units;
 }
+
+const verticalScale = (size) => (height / CONST.SCREEN_HEIGHT) * size;
+
+export { verticalScale };

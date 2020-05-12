@@ -1,0 +1,87 @@
+{
+  "project_info": {
+    "project_number": "580318158991",
+    "firebase_url": "https://rnboilerplate60.firebaseio.com",
+    "project_id": "rnboilerplate60",
+    "storage_bucket": "rnboilerplate60.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:580318158991:android:daa6ed249fc21244",
+        "android_client_info": {
+          "package_name": "com.sysboilerplatern"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "580318158991-t43dkj2l21fbp8ggfgnfj1m9epqo38q7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sysboilerplatern",
+            "certificate_hash": "5f49b624ef4ce00f302288525fa76912dd88f336"
+          }
+        },
+        {
+          "client_id": "580318158991-4l53cjgofer3kqcbfi5crga22fd1dt9a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sysboilerplatern",
+            "certificate_hash": "ecf4a9bee61b7b4f4c28b39cf2195ef879ce1a13"
+          }
+        },
+        {
+          "client_id": "580318158991-0r6b1s00esfhg0a0q8n51rd1ae1pfcur.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sysboilerplatern",
+            "certificate_hash": "6605a4919a60e7dbe87a82063397606360584149"
+          }
+        },
+        {
+          "client_id": "580318158991-77s9ugs308071a4e53ai2valml0bmnvu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sysboilerplatern",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "580318158991-ud3a2oe51n5togqhubjfn5ip1q7j8c4l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sysboilerplatern",
+            "certificate_hash": "d6de6e127933ff5dc5e3e38168daa551dc760e9a"
+          }
+        },
+        {
+          "client_id": "580318158991-kaoe76t99ikgclu8elfh12osvu15pu8s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCy6w10Mk0YMhCRKBtRK198qT86gxe-VrU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "580318158991-kaoe76t99ikgclu8elfh12osvu15pu8s.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "580318158991-oubu79h8dpsdrfi1k7a5ussvfh3tivua.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.sys.rn.boilerplate"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

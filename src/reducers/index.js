@@ -1,8 +1,16 @@
 import { combineReducers } from 'redux';
-import commonReducer from './commonReducer';
-import signinReducer from './signinReducer';
+import configureStore from '../stores/createStore';
+import rootSaga from '../sagas';
+import UserLoginReducer from './userLoginReducer';
+import StartUpReducer from './startUpReducer';
+import LanguageReducer from './languageReducer';
 
-export default combineReducers({
-  commonReducer,
-	signinReducer,	
-});
+export default () => {
+  const rootReducer = combineReducers({
+    UserLoginReducer,
+    StartUpReducer,
+    LanguageReducer,
+  });
+
+  return configureStore(rootReducer, rootSaga);
+};

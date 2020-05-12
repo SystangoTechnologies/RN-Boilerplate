@@ -1,62 +1,119 @@
 /**
  * Sample React Native App
  * https://github.com/facebook/react-native
+ *
+ * @format
  * @flow
  */
 
-import React, { Component } from 'react';
+import React, {Fragment} from 'react';
 import {
-  Platform,
+  SafeAreaView,
   StyleSheet,
+  ScrollView,
+  View,
   Text,
-  View
+  StatusBar,
 } from 'react-native';
 
-import { Provider } from 'react-redux'
-import configureStore from './src/configureStore';
-import Orientation from 'react-native-orientation';
-import Home from './src/Home'
-import Spinner from '@components/Spinner'
+import {
+  Header,
+  LearnMoreLinks,
+  Colors,
+  DebugInstructions,
+  ReloadInstructions,
+} from 'react-native/Libraries/NewAppScreen';
 
-export default class App extends Component<{}> {
+import { Sentry } from 'react-native-sentry';
 
-  constructor (props) {
-    super(props)
-    this.state = {
-      store: configureStore(() => {
-				console.log('Store persisted !');
-			})
-    }
-  }
+Sentry.config('https://2a5c220c8b6a499882a908969651fef8@sentry.io/1760827').install();
 
-  componentDidMount(){
-    Orientation.lockToPortrait();
-  }
-/**
- * A loading indicator to show any process is under progress and UI can be blocked during that duration.
- */
-  spinner() {
-    return (
-      <Spinner/>
-    )
-  }
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <Provider store = {this.state.store}>
-          <View style={styles.container}>
-          <Home/>
-          {this.spinner()}
+const App = () => {
+  return (
+    <Fragment>
+      <StatusBar barStyle="dark-content" />
+      <SafeAreaView>
+        <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
+          style={styles.scrollView}>
+          <Header />
+          {global.HermesInternal == null ? null : (
+            <View style={styles.engine}>
+              <Text style={styles.footer}>Engine: Hermes</Text>
+            </View>
+          )}
+          <View style={styles.body}>
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionTitle}>Step One</Text>
+              <Text style={styles.sectionDescription}>
+                Edit <Text style={styles.highlight}>App.js</Text> to change this
+                screen and then come back to see your edits.
+              </Text>
+            </View>
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionTitle}>See Your Changes</Text>
+              <Text style={styles.sectionDescription}>
+                <ReloadInstructions />
+              </Text>
+            </View>
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionTitle}>Debug</Text>
+              <Text style={styles.sectionDescription}>
+                <DebugInstructions />
+              </Text>
+            </View>
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionTitle}>Learn More</Text>
+              <Text style={styles.sectionDescription}>
+                Read the docs to discover what to do next:
+              </Text>
+            </View>
+            <LearnMoreLinks />
           </View>
-        </Provider>
-      </View>
-    );
-  }
-}
+        </ScrollView>
+      </SafeAreaView>
+    </Fragment>
+  );
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  scrollView: {
+    backgroundColor: Colors.lighter,
+  },
+  engine: {
+    position: 'absolute',
+    right: 0,
+  },
+  body: {
+    backgroundColor: Colors.white,
+  },
+  sectionContainer: {
+    marginTop: 32,
+    paddingHorizontal: 24,
+  },
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: Colors.black,
+  },
+  sectionDescription: {
+    marginTop: 8,
+    fontSize: 18,
+    fontWeight: '400',
+    color: Colors.dark,
+  },
+  highlight: {
+    fontWeight: '700',
+  },
+  footer: {
+    color: Colors.dark,
+    fontSize: 12,
+    fontWeight: '600',
+    padding: 4,
+    paddingRight: 12,
+    textAlign: 'right',
   },
 });
+
+export default App;

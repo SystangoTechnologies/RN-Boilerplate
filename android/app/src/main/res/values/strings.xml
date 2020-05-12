@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">RNBoilerplate</string>
+    <string name="app_name">SysBoilerplateRN</string>
+    <string name="facebook_app_id">2098582600436822</string>
 </resources>
