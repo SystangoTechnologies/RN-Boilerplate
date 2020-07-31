@@ -18,11 +18,6 @@
 
 #import <Foundation/Foundation.h>
 
-#import <FBSDKCoreKit/FBSDKCoreKit.h>
-
-#import <FBSDKShareKit/FBSDKShareVideo.h>
-#import <FBSDKShareKit/FBSDKSharing.h>
-
 @protocol FBSDKVideoUploaderDelegate;
 
 /**
@@ -46,12 +41,6 @@ NS_SWIFT_NAME(VideoUploader)
  */
 - (instancetype)initWithVideoName:(NSString *)videoName videoSize:(NSUInteger)videoSize parameters:(NSDictionary *)parameters delegate:(id<FBSDKVideoUploaderDelegate>)delegate
 NS_DESIGNATED_INITIALIZER;
-
-
-/**
-  The video to be uploaded.
- */
-@property (readonly, copy, nonatomic) FBSDKShareVideo *video;
 
 /**
   Optional parameters for video uploads. See Graph API documentation for the full list of parameters https://developers.facebook.com/docs/graph-api/reference/video

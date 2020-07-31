@@ -16,6 +16,10 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#import "TargetConditionals.h"
+
+#if !TARGET_OS_TV
+
 #import "FBSDKAppLinkReturnToRefererController.h"
 
 #import "FBSDKAppLink.h"
@@ -35,6 +39,8 @@ static const CFTimeInterval kFBSDKViewAnimationDuration = 0.25f;
   return [super init];
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (instancetype)initForDisplayAboveNavController:(UINavigationController *)navController {
     self = [self init];
     if (self) {
@@ -236,3 +242,5 @@ static const CFTimeInterval kFBSDKViewAnimationDuration = 0.25f;
 }
 
 @end
+#pragma clang diagnostic pop
+#endif

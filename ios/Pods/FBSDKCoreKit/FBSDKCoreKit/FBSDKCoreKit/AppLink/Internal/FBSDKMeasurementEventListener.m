@@ -16,10 +16,15 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#import "TargetConditionals.h"
+
+#if !TARGET_OS_TV
+
 #import "FBSDKMeasurementEventListener.h"
 
 #import "FBSDKAppEvents+Internal.h"
 #import "FBSDKTimeSpentData.h"
+#import "FBSDKTypeUtility.h"
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
 
@@ -71,7 +76,7 @@ static NSString *const FBSDKMeasurementEventPrefix = @"bf_";
                                                               range:NSMakeRange(0, key.length)
                                                        withTemplate:@"-"];
         safeKey = [safeKey stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@" -"]];
-        logData[safeKey] = eventArgs[key];
+        [FBSDKTypeUtility dictionary:logData setObject:eventArgs[key] forKey:safeKey];
     }
     [FBSDKAppEvents logInternalEvent:[FBSDKMeasurementEventPrefix stringByAppendingString:note.userInfo[FBSDKMeasurementEventName]]
                           parameters:logData
@@ -84,3 +89,5 @@ static NSString *const FBSDKMeasurementEventPrefix = @"bf_";
 }
 
 @end
+
+#endif

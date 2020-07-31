@@ -16,6 +16,10 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#import "TargetConditionals.h"
+
+#if !TARGET_OS_TV
+
 #import "FBSDKProfilePictureView.h"
 
 #import "FBSDKAccessToken.h"
@@ -125,6 +129,22 @@
     [self _configureProfilePictureView];
   }
   return self;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame
+                      profile:(FBSDKProfile *)profile
+{
+  if ((self = [super initWithFrame:frame])) {
+    _profileID = [profile.userID copy];
+
+    [self setNeedsImageUpdate];
+  }
+  return self;
+}
+
+- (instancetype)initWithProfile:(FBSDKProfile *)profile
+{
+  return [self initWithFrame:CGRectZero profile:profile];
 }
 
 - (void)dealloc
@@ -314,9 +334,9 @@
   NSString *path = [[NSString alloc] initWithFormat:@"/%@/picture", [FBSDKUtility URLEncode:state.profileID]];
   CGSize size = state.size;
   NSMutableDictionary<NSString *, id> *parameters = [[NSMutableDictionary alloc] init];
-  parameters[@"width"] = @(size.width);
-  parameters[@"height"] = @(size.height);
-  [FBSDKBasicUtility dictionary:parameters setObject:accessToken.tokenString forKey:@"access_token"];
+  [FBSDKTypeUtility dictionary:parameters setObject:@(size.width) forKey:@"width"];
+  [FBSDKTypeUtility dictionary:parameters setObject:@(size.height) forKey:@"height"];
+  [FBSDKTypeUtility dictionary:parameters setObject:accessToken.tokenString forKey:@"access_token"];
   NSURL *imageURL = [FBSDKInternalUtility facebookURLWithHostPrefix:@"graph" path:path queryParameters:parameters error:NULL];
 
   __weak FBSDKProfilePictureView *weakSelf = self;
@@ -364,3 +384,5 @@
 }
 
 @end
+
+#endif

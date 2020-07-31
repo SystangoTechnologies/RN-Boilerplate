@@ -16,19 +16,31 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#if SWIFT_PACKAGE
+#import "FBSDKSettings.h"
+#else
 #import <FBSDKCoreKit/FBSDKSettings.h>
+#endif
+
+#define DATA_PROCESSING_OPTIONS         @"data_processing_options"
+#define DATA_PROCESSING_OPTIONS_COUNTRY @"data_processing_options_country"
+#define DATA_PROCESSING_OPTIONS_STATE   @"data_processing_options_state"
 
 @protocol FBSDKAccessTokenCaching;
 
 @interface FBSDKSettings(Internal)
 
-+ (NSObject<FBSDKAccessTokenCaching> *)accessTokenCache;
++ (nullable NSObject<FBSDKAccessTokenCaching> *)accessTokenCache;
 
-+ (void)setAccessTokenCache:(NSObject<FBSDKAccessTokenCaching> *)accessTokenCache;
++ (void)setAccessTokenCache:(nullable NSObject<FBSDKAccessTokenCaching> *)accessTokenCache;
 
-@property (class, nonatomic, copy, readonly) NSString *graphAPIDebugParamValue;
++ (nullable NSDictionary<NSString *, id> *)dataProcessingOptions;
+
++ (BOOL)isDataProcessingRestricted;
+
+@property (class, nonatomic, copy, readonly, nullable) NSString *graphAPIDebugParamValue;
 
 // used by Unity.
-@property (class, nonatomic, copy) NSString *userAgentSuffix;
+@property (class, nonatomic, copy, nullable) NSString *userAgentSuffix;
 
 @end

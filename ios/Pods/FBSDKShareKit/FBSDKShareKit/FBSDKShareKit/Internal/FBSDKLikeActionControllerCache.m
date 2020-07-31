@@ -16,11 +16,16 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#import "TargetConditionals.h"
+
+#if !TARGET_OS_TV
+
 #import "FBSDKLikeActionControllerCache.h"
 
 #import <UIKit/UIKit.h>
 
 #import "FBSDKLikeActionController.h"
+#import "FBSDKCoreKit+Internal.h"
 
 // after 1 day, expire the cached states
 #define FBSDK_LIKE_ACTION_CONTROLLER_CACHE_TIMEOUT 60 * 24
@@ -87,7 +92,7 @@
 
 - (void)setObject:(id)object forKeyedSubscript:(id)key
 {
-  _items[key] = object;
+  [FBSDKTypeUtility dictionary:_items setObject:object forKey:key];
 }
 
 #pragma mark - Helper Methods
@@ -95,7 +100,7 @@
 - (void)_prune
 {
   NSMutableArray *keysToRemove = [[NSMutableArray alloc] init];
-  [_items enumerateKeysAndObjectsUsingBlock:^(NSString *objectID,
+  [FBSDKTypeUtility dictionary:_items enumerateKeysAndObjectsUsingBlock:^(NSString *objectID,
                                               FBSDKLikeActionController *likeActionController,
                                               BOOL *stop) {
     NSDate *lastUpdateTime = likeActionController.lastUpdateTime;
@@ -108,3 +113,5 @@
 }
 
 @end
+
+#endif

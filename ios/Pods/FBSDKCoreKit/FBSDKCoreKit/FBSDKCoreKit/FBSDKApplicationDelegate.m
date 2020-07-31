@@ -25,6 +25,7 @@
 #import "FBSDKConstants.h"
 #import "FBSDKDynamicFrameworkLoader.h"
 #import "FBSDKError.h"
+#import "FBSDKEventDeactivationManager.h"
 #import "FBSDKFeatureManager.h"
 #import "FBSDKGateKeeperManager.h"
 #import "FBSDKInstrumentManager.h"
@@ -117,9 +118,24 @@ static UIApplicationState _applicationState;
     }
   }];
 
+  [FBSDKFeatureManager checkFeature:FBSDKFeatureEventDeactivation completionBlock:^(BOOL enabled) {
+    if (enabled) {
+      [FBSDKEventDeactivationManager enable];
+    }
+  }];
+
+  [FBSDKFeatureManager checkFeature:FBSDKFeatureMonitoring completionBlock:^(BOOL enabled) {
+    if (enabled && FBSDKSettings.isAutoLogAppEventsEnabled) {
+#ifndef DEBUG
+      [FBSDKMonitor enable];
+#endif
+    }
+  }];
+
 #if !TARGET_OS_TV
   // Register Listener for App Link measurement events
   [FBSDKMeasurementEventListener defaultListener];
+  [delegate _logIfAutoAppLinkEnabled];
 #endif
   // Set the SourceApplication for time spent data. This is not going to update the value if the app has already launched.
   [FBSDKTimeSpentData setSourceApplication:launchOptions[UIApplicationLaunchOptionsSourceApplicationKey]
@@ -220,7 +236,7 @@ static UIApplicationState _applicationState;
     [FBSDKServerConfigurationManager loadServerConfigurationWithCompletionBlock:NULL];
 
     if (FBSDKSettings.isAutoLogAppEventsEnabled) {
-        [self _logSDKInitialize];
+      [self _logSDKInitialize];
     }
 #if !TARGET_OS_TV
     FBSDKProfile *cachedProfile = [FBSDKProfile fetchCachedProfile];
@@ -311,17 +327,17 @@ static UIApplicationState _applicationState;
   NSURL *targetURL = [targetURLString isKindOfClass:[NSString class]] ? [NSURL URLWithString:targetURLString] : nil;
 
   NSMutableDictionary *logData = [[NSMutableDictionary alloc] init];
-  [FBSDKBasicUtility dictionary:logData setObject:targetURL.absoluteString forKey:@"targetURL"];
-  [FBSDKBasicUtility dictionary:logData setObject:targetURL.host forKey:@"targetURLHost"];
+  [FBSDKTypeUtility dictionary:logData setObject:targetURL.absoluteString forKey:@"targetURL"];
+  [FBSDKTypeUtility dictionary:logData setObject:targetURL.host forKey:@"targetURLHost"];
 
   NSDictionary *refererData = applinkData[@"referer_data"];
   if (refererData) {
-    [FBSDKBasicUtility dictionary:logData setObject:refererData[@"target_url"] forKey:@"referralTargetURL"];
-    [FBSDKBasicUtility dictionary:logData setObject:refererData[@"url"] forKey:@"referralURL"];
-    [FBSDKBasicUtility dictionary:logData setObject:refererData[@"app_name"] forKey:@"referralAppName"];
+    [FBSDKTypeUtility dictionary:logData setObject:refererData[@"target_url"] forKey:@"referralTargetURL"];
+    [FBSDKTypeUtility dictionary:logData setObject:refererData[@"url"] forKey:@"referralURL"];
+    [FBSDKTypeUtility dictionary:logData setObject:refererData[@"app_name"] forKey:@"referralAppName"];
   }
-  [FBSDKBasicUtility dictionary:logData setObject:url.absoluteString forKey:@"inputURL"];
-  [FBSDKBasicUtility dictionary:logData setObject:url.scheme forKey:@"inputURLScheme"];
+  [FBSDKTypeUtility dictionary:logData setObject:url.absoluteString forKey:@"inputURL"];
+  [FBSDKTypeUtility dictionary:logData setObject:url.scheme forKey:@"inputURLScheme"];
 
   [FBSDKAppEvents logInternalEvent:FBSDKAppLinkInboundEvent
                         parameters:logData
@@ -346,41 +362,17 @@ static UIApplicationState _applicationState;
   NSInteger bitmask = 0;
   NSInteger bit = 0;
   NSMutableDictionary<NSString *, NSNumber *> *params = NSMutableDictionary.new;
-  params[@"core_lib_included"] = @1;
+  [FBSDKTypeUtility dictionary:params setObject:@1 forKey:@"core_lib_included"];
   for (NSString *className in metaInfo.allKeys) {
-    NSString *keyName = [metaInfo objectForKey:className];
+    NSString *keyName = [FBSDKTypeUtility dictionary:metaInfo objectForKey:className ofType:NSObject.class];
     if (objc_lookUpClass([className UTF8String])) {
-      params[keyName] = @1;
+      [FBSDKTypeUtility dictionary:params setObject:@1 forKey:keyName];
       bitmask |=  1 << bit;
     }
     bit++;
   }
 
-  // Tracking if the consuming Application is using Swift
-  id delegate = [UIApplication sharedApplication].delegate;
-  NSString const *className = NSStringFromClass([delegate class]);
-  if ([className componentsSeparatedByString:@"."].count > 1) {
-    params[@"is_using_swift"] = @YES;
-  }
-
-  void (^checkViewForSwift)(void) = ^void ()
-  {
-    // Additional check to see if the consuming application perhaps was
-    // originally an objc project but is now using Swift
-    UIViewController *topMostViewController = [FBSDKInternalUtility topMostViewController];
-    NSString const *vcClassName = NSStringFromClass([topMostViewController class]);
-    if ([vcClassName componentsSeparatedByString:@"."].count > 1) {
-      params[@"is_using_swift"] = @YES;
-    }
-  };
-
-  if ([NSThread isMainThread]) {
-    checkViewForSwift();
-  } else {
-    dispatch_sync(dispatch_get_main_queue(), ^{
-      checkViewForSwift();
-    });
-  }
+  [self _logSwiftRuntimeAvailability];
 
   NSInteger existingBitmask = [[NSUserDefaults standardUserDefaults] integerForKey:FBSDKKitsBitmaskKey];
   if (existingBitmask != bitmask) {
@@ -389,6 +381,53 @@ static UIApplicationState _applicationState;
                           parameters:params
                   isImplicitlyLogged:NO];
   }
+}
+
+- (void)_logIfAutoAppLinkEnabled
+{
+#if !TARGET_OS_TV
+  NSNumber *enabled = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"FBSDKAutoAppLinkEnabled"];
+  if (enabled.boolValue) {
+    NSMutableDictionary<NSString *, NSString *> *params = [[NSMutableDictionary alloc] init];
+    if (![FBSDKAppLinkUtility isMatchURLScheme:[NSString stringWithFormat:@"fb%@", [FBSDKSettings appID]]]) {
+      NSString *warning = @"You haven't set the Auto App Link URL scheme: fb<YOUR APP ID>";
+      [FBSDKTypeUtility dictionary:params setObject:warning forKey:@"SchemeWarning"];
+      NSLog(@"%@", warning);
+    }
+    [FBSDKAppEvents logInternalEvent:@"fb_auto_applink" parameters:params isImplicitlyLogged:YES];
+  }
+#endif
+}
+
+- (void)_logSwiftRuntimeAvailability
+{
+  NSString *swiftUsageKey = @"is_using_swift";
+  NSString *eventName = @"fb_sdk_swift_runtime_check";
+  NSMutableDictionary<NSString *, NSNumber *> *params = NSMutableDictionary.new;
+
+  // Tracking if the consuming Application is using Swift
+  id delegate = [UIApplication sharedApplication].delegate;
+  NSString const *className = NSStringFromClass([delegate class]);
+  if ([className componentsSeparatedByString:@"."].count > 1) {
+    params[swiftUsageKey] = @YES;
+  }
+
+  // Additional check to see if the consuming application perhaps was
+  // originally an objc project but is now using Swift
+  if (!params[swiftUsageKey].boolValue) {
+    double delayInSeconds = 1.0;
+    dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+    dispatch_after(delay, dispatch_get_main_queue(), ^{
+      UIViewController *topMostViewController = [FBSDKInternalUtility topMostViewController];
+      NSString const *vcClassName = NSStringFromClass([topMostViewController class]);
+      if ([vcClassName componentsSeparatedByString:@"."].count > 1) {
+        params[swiftUsageKey] = @YES;
+        [FBSDKAppEvents logInternalEvent:eventName
+                              parameters:params
+                      isImplicitlyLogged:NO];
+      }
+    });
+  };
 }
 
 + (BOOL)isSDKInitialized

@@ -22,7 +22,7 @@
 
 #import <UIKit/UIKit.h>
 
-#import <FBSDKCoreKit/FBSDKCoreKit+Internal.h>
+#import "FBSDKCoreKit+Internal.h"
 
 #define FBSDK_DEVICE_INFO_DEVICE @"device"
 #define FBSDK_DEVICE_INFO_MODEL @"model"
@@ -58,7 +58,7 @@ static NSMapTable *g_mdnsAdvertisementServices;
                                FBSDK_DEVICE_INFO_MODEL: [UIDevice currentDevice].model,
                                };
   NSError *err;
-  NSData *jsonDeviceInfo = [NSJSONSerialization dataWithJSONObject:deviceInfo
+  NSData *jsonDeviceInfo = [FBSDKTypeUtility dataWithJSONObject:deviceInfo
                                                            options:0
                                                              error:&err];
 

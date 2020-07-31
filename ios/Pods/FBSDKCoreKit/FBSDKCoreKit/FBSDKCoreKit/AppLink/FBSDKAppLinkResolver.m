@@ -16,6 +16,10 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#import "TargetConditionals.h"
+
+#if !TARGET_OS_TV
+
 #import "FBSDKAppLinkResolver.h"
 
 #import <UIKit/UIKit.h>
@@ -83,15 +87,15 @@ static NSString *const kAppLinksKey = @"app_links";
   @synchronized (self.cachedFBSDKAppLinks) {
     for (NSURL *url in urls) {
       if (self.cachedFBSDKAppLinks[url]) {
-        appLinks[url] = self.cachedFBSDKAppLinks[url];
+        [FBSDKTypeUtility dictionary:appLinks setObject:self.cachedFBSDKAppLinks[url] forKey:url];
       } else {
-        [toFind addObject:url];
+        [FBSDKTypeUtility array:toFind addObject:url];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
         NSString *toFindString = [url.absoluteString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 #pragma clang diagnostic pop
         if (toFindString) {
-          [toFindStrings addObject:toFindString];
+          [FBSDKTypeUtility array:toFindStrings addObject:toFindString];
         }
       }
     }
@@ -115,7 +119,7 @@ static NSString *const kAppLinksKey = @"app_links";
       break;
   }
   if (idiomSpecificField) {
-    [fields addObject:idiomSpecificField];
+    [FBSDKTypeUtility array:fields addObject:idiomSpecificField];
   }
   NSString *path = [NSString stringWithFormat:@"?fields=%@.fields(%@)&ids=%@",
                     kAppLinksKey,
@@ -140,7 +144,7 @@ static NSString *const kAppLinksKey = @"app_links";
 
       NSMutableArray<FBSDKAppLinkTarget *> *targets = [NSMutableArray arrayWithCapacity:rawTargets.count];
       for (id rawTarget in rawTargets) {
-        [targets addObject:[FBSDKAppLinkTarget appLinkTargetWithURL:[NSURL URLWithString:rawTarget[kURLKey]]
+        [FBSDKTypeUtility array:targets addObject:[FBSDKAppLinkTarget appLinkTargetWithURL:[NSURL URLWithString:rawTarget[kURLKey]]
                                                          appStoreId:rawTarget[kIOSAppStoreIdKey]
                                                             appName:rawTarget[kIOSAppNameKey]]];
       }
@@ -158,17 +162,22 @@ static NSString *const kAppLinksKey = @"app_links";
                                                       targets:targets
                                                        webURL:fallbackUrl];
       @synchronized (self.cachedFBSDKAppLinks) {
-        self.cachedFBSDKAppLinks[url] = link;
+        [FBSDKTypeUtility dictionary:self.cachedFBSDKAppLinks setObject:link forKey:url];
       }
-      appLinks[url] = link;
+      [FBSDKTypeUtility dictionary:appLinks setObject:link forKey:url];
     }
     handler(appLinks, nil);
   }];
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 + (instancetype)resolver
 {
   return [[self alloc] initWithUserInterfaceIdiom:UI_USER_INTERFACE_IDIOM()];
 }
+#pragma clang diagnostic pop
 
 @end
+
+#endif

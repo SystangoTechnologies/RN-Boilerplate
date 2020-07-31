@@ -16,6 +16,10 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#import "TargetConditionals.h"
+
+#if !TARGET_OS_TV
+
 #import "FBSDKBridgeAPIRequest.h"
 #import "FBSDKBridgeAPIRequest+Private.h"
 
@@ -114,8 +118,8 @@ NSString *const FBSDKBridgeAPIVersionKey = @"version";
 
   NSDictionary<NSString *, NSString *> *requestQueryParameters = [FBSDKBasicUtility dictionaryWithQueryString:requestURL.query];
   NSMutableDictionary *queryParameters = [[NSMutableDictionary alloc] initWithDictionary:requestQueryParameters];
-  [FBSDKBasicUtility dictionary:queryParameters setObject:[FBSDKSettings appID] forKey:FBSDKBridgeAPIAppIDKey];
-  [FBSDKBasicUtility dictionary:queryParameters
+  [FBSDKTypeUtility dictionary:queryParameters setObject:[FBSDKSettings appID] forKey:FBSDKBridgeAPIAppIDKey];
+  [FBSDKTypeUtility dictionary:queryParameters
                       setObject:[FBSDKSettings appURLSchemeSuffix]
                          forKey:FBSDKBridgeAPISchemeSuffixKey];
   requestURL = [FBSDKInternalUtility URLWithScheme:requestURL.scheme
@@ -149,3 +153,5 @@ NSString *const FBSDKBridgeAPIVersionKey = @"version";
 }
 
 @end
+
+#endif

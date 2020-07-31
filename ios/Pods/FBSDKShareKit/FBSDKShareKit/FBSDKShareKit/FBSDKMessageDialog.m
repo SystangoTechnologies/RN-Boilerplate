@@ -16,9 +16,13 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#import "TargetConditionals.h"
+
+#if !TARGET_OS_TV
+
 #import "FBSDKMessageDialog.h"
 
-#ifdef COCOAPODS
+#ifdef FBSDKCOCOAPODS
 #import <FBSDKCoreKit/FBSDKCoreKit+Internal.h>
 #else
 #import "FBSDKCoreKit+Internal.h"
@@ -26,10 +30,6 @@
 #import "FBSDKShareCameraEffectContent.h"
 #import "FBSDKShareConstants.h"
 #import "FBSDKShareDefines.h"
-#import "FBSDKShareMessengerGenericTemplateContent.h"
-#import "FBSDKShareMessengerMediaTemplateContent.h"
-#import "FBSDKShareMessengerOpenGraphMusicTemplateContent.h"
-#import "FBSDKShareOpenGraphContent.h"
 #import "FBSDKShareUtility.h"
 #import "FBSDKShareVideoContent.h"
 
@@ -128,9 +128,8 @@
 {
   if (self.shareContent) {
     if ([self.shareContent isKindOfClass:[FBSDKShareLinkContent class]] ||
-        [self.shareContent isKindOfClass:[FBSDKShareMessengerGenericTemplateContent class]] ||
-        [self.shareContent isKindOfClass:[FBSDKShareMessengerMediaTemplateContent class]] ||
-        [self.shareContent isKindOfClass:[FBSDKShareMessengerOpenGraphMusicTemplateContent class]]) {
+        [self.shareContent isKindOfClass:[FBSDKSharePhotoContent class]] ||
+        [self.shareContent isKindOfClass:[FBSDKShareVideoContent class]]) {
     } else {
       if (errorRef != NULL) {
         NSString *message = [NSString stringWithFormat:@"Message dialog does not support %@.",
@@ -209,38 +208,30 @@
 {
   NSMutableDictionary * parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys:FBSDKAppEventsDialogOutcomeValue_Failed, FBSDKAppEventParameterDialogOutcome, nil];
   if (error) {
-    parameters[FBSDKAppEventParameterDialogErrorMessage] = [NSString stringWithFormat:@"%@", error];
+    [FBSDKTypeUtility dictionary:parameters setObject:[NSString stringWithFormat:@"%@", error] forKey:FBSDKAppEventParameterDialogErrorMessage];
+
+    [FBSDKAppEvents logInternalEvent:FBSDKAppEventNameFBSDKEventMessengerShareDialogResult
+                          parameters:parameters
+                  isImplicitlyLogged:YES
+                         accessToken:[FBSDKAccessToken currentAccessToken]];
+
+    if (!_delegate) {
+      return;
+    }
+
+    [_delegate sharer:self didFailWithError:error];
   }
-
-  [FBSDKAppEvents logInternalEvent:FBSDKAppEventNameFBSDKEventMessengerShareDialogResult
-                        parameters:parameters
-                isImplicitlyLogged:YES
-                       accessToken:[FBSDKAccessToken currentAccessToken]];
-
-  if (!_delegate) {
-    return;
-  }
-
-  [_delegate sharer:self didFailWithError:error];
 }
 
 - (void)_logDialogShow
 {
   NSString *contentType;
-  if([self.shareContent isKindOfClass:NSClassFromString(@"FBSDKShareOpenGraphContent")]) {
-    contentType = FBSDKAppEventsDialogShareContentTypeOpenGraph;
-  } else if ([self.shareContent isKindOfClass:[FBSDKShareLinkContent class]]) {
+  if ([self.shareContent isKindOfClass:[FBSDKShareLinkContent class]]) {
     contentType = FBSDKAppEventsDialogShareContentTypeStatus;
   } else if ([self.shareContent isKindOfClass:[FBSDKSharePhotoContent class]]) {
     contentType = FBSDKAppEventsDialogShareContentTypePhoto;
   } else if ([self.shareContent isKindOfClass:[FBSDKShareVideoContent class]]) {
     contentType = FBSDKAppEventsDialogShareContentTypeVideo;
-  } else if ([self.shareContent isKindOfClass:[FBSDKShareMessengerGenericTemplateContent class]]) {
-    contentType = FBSDKAppEventsDialogShareContentTypeMessengerGenericTemplate;
-  } else if ([self.shareContent isKindOfClass:[FBSDKShareMessengerMediaTemplateContent class]]) {
-    contentType = FBSDKAppEventsDialogShareContentTypeMessengerMediaTemplate;
-  } else if ([self.shareContent isKindOfClass:[FBSDKShareMessengerOpenGraphMusicTemplateContent class]]) {
-    contentType = FBSDKAppEventsDialogShareContentTypeMessengerOpenGraphMusicTemplate;
   } else {
     contentType = FBSDKAppEventsDialogShareContentTypeUnknown;
   }
@@ -256,3 +247,5 @@
 }
 
 @end
+
+#endif

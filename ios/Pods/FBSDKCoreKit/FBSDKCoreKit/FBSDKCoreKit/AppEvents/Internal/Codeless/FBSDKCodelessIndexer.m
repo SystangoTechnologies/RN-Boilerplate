@@ -16,6 +16,10 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#import "TargetConditionals.h"
+
+#if !TARGET_OS_TV
+
 #import "FBSDKCodelessIndexer.h"
 
 #import <objc/runtime.h>
@@ -24,9 +28,9 @@
 
 #import <UIKit/UIKit.h>
 
-#import <FBSDKCoreKit/FBSDKCoreKit+Internal.h>
-#import <FBSDKCoreKit/FBSDKGraphRequest.h>
-#import <FBSDKCoreKit/FBSDKSettings.h>
+#import "FBSDKCoreKit+Internal.h"
+#import "FBSDKGraphRequest.h"
+#import "FBSDKSettings.h"
 
 @implementation FBSDKCodelessIndexer
 
@@ -58,6 +62,8 @@ static NSString *_lastTreeHash;
 #endif
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 // DO NOT call this function, it is only called once in the load function
 + (void)loadCodelessSettingWithCompletionBlock:(FBSDKCodelessSettingLoadBlock)completionBlock
 {
@@ -85,7 +91,7 @@ static NSString *_lastTreeHash;
       _codelessSetting = [[NSMutableDictionary alloc] init];
     }
 
-    if (![self _codelessSetupTimestampIsValid:[_codelessSetting objectForKey:CODELESS_SETTING_TIMESTAMP_KEY]]) {
+    if (![self _codelessSetupTimestampIsValid:[FBSDKTypeUtility dictionary:_codelessSetting objectForKey:CODELESS_SETTING_TIMESTAMP_KEY ofType:NSObject.class]]) {
       FBSDKGraphRequest *request = [self requestToLoadCodelessSetup:appID];
       if (request == nil) {
         return;
@@ -100,8 +106,8 @@ static NSString *_lastTreeHash;
         NSDictionary<NSString *, id> *resultDictionary = [FBSDKTypeUtility dictionaryValue:result];
         if (resultDictionary) {
           BOOL isCodelessSetupEnabled = [FBSDKTypeUtility boolValue:resultDictionary[CODELESS_SETUP_ENABLED_FIELD]];
-          [_codelessSetting setObject:@(isCodelessSetupEnabled) forKey:CODELESS_SETUP_ENABLED_KEY];
-          [_codelessSetting setObject:[NSDate date] forKey:CODELESS_SETTING_TIMESTAMP_KEY];
+          [FBSDKTypeUtility dictionary:_codelessSetting setObject:@(isCodelessSetupEnabled) forKey:CODELESS_SETUP_ENABLED_KEY];
+          [FBSDKTypeUtility dictionary:_codelessSetting setObject:[NSDate date] forKey:CODELESS_SETTING_TIMESTAMP_KEY];
           // update the cached copy in user defaults
           [defaults setObject:[NSKeyedArchiver archivedDataWithRootObject:_codelessSetting] forKey:defaultKey];
           completionBlock(isCodelessSetupEnabled, codelessLoadingError);
@@ -109,10 +115,11 @@ static NSString *_lastTreeHash;
       }];
       [requestConnection start];
     } else {
-      completionBlock([FBSDKTypeUtility boolValue:[_codelessSetting objectForKey:CODELESS_SETUP_ENABLED_KEY]], nil);
+      completionBlock([FBSDKTypeUtility boolValue:[FBSDKTypeUtility dictionary:_codelessSetting objectForKey:CODELESS_SETUP_ENABLED_KEY ofType:NSObject.class]], nil);
     }
   }];
 }
+#pragma clang diagnostic pop
 
 + (FBSDKGraphRequest *)requestToLoadCodelessSetup:(NSString *)appID
 {
@@ -312,12 +319,15 @@ static NSString *_lastTreeHash;
 
   NSArray *windows = [UIApplication sharedApplication].windows;
   for (UIWindow *window in windows) {
-    NSDictionary *tree = [FBSDKCodelessIndexer recursiveCaptureTree:window];
+    NSDictionary *tree = [FBSDKViewHierarchy recursiveCaptureTreeWithCurrentNode:window
+                                                                      targetNode:nil
+                                                                   objAddressSet:nil
+                                                                            hash:YES];
     if (tree) {
       if (window.isKeyWindow) {
         [trees insertObject:tree atIndex:0];
       } else {
-        [trees addObject:tree];
+        [FBSDKTypeUtility array:trees addObject:tree];
       }
     }
   }
@@ -333,38 +343,16 @@ static NSString *_lastTreeHash;
 
   NSMutableDictionary *treeInfo = [NSMutableDictionary dictionary];
 
-  treeInfo[@"view"] = viewTrees;
-  treeInfo[@"screenshot"] = screenshot ?: @"";
+  [FBSDKTypeUtility dictionary:treeInfo setObject:viewTrees forKey:@"view"];
+  [FBSDKTypeUtility dictionary:treeInfo setObject:screenshot ?: @"" forKey:@"screenshot"];
 
   NSString *tree = nil;
-  data = [NSJSONSerialization dataWithJSONObject:treeInfo options:0 error:nil];
+  data = [FBSDKTypeUtility dataWithJSONObject:treeInfo options:0 error:nil];
   if (data) {
     tree = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
   }
 
   return tree;
-}
-
-+ (NSDictionary<NSString *, id> *)recursiveCaptureTree:(NSObject *)obj
-{
-  if (!obj) {
-    return nil;
-  }
-
-  NSMutableDictionary *result = [FBSDKViewHierarchy getDetailAttributesOf:obj];
-
-  NSArray *children = [FBSDKViewHierarchy getChildren:obj];
-  NSMutableArray *childrenTrees = [NSMutableArray array];
-  for (NSObject *child in children) {
-    NSDictionary *objTree = [self recursiveCaptureTree:child];
-    [childrenTrees addObject:objTree];
-  }
-
-  if (childrenTrees.count > 0) {
-    [result setValue:[childrenTrees copy] forKey:CODELESS_VIEW_TREE_CHILDREN_KEY];
-  }
-
-  return [result copy];
 }
 
 + (UIImage *)screenshot {
@@ -406,3 +394,5 @@ static NSString *_lastTreeHash;
 }
 
 @end
+
+#endif

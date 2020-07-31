@@ -92,13 +92,6 @@ NS_SWIFT_NAME(jpegCompressionQuality);
 @property (class, nonatomic, assign, getter=isAutoInitEnabled) BOOL autoInitEnabled;
 
 /**
- Controls sdk crash report
- If not explicitly set, the default is true
- */
-@property (class, nonatomic, assign, getter=isInstrumentEnabled) BOOL instrumentEnabled
-__attribute((deprecated("This attribute is no longer used, use autoLogAppEventsEnabled instead.")));
-
-/**
  Controls the auto logging of basic app events, such as activateApp and deactivateApp.
  If not explicitly set, the default is true
  */
@@ -193,6 +186,24 @@ NS_REFINED_FOR_SWIFT;
  Defaults to `FBSDK_TARGET_PLATFORM_VERSION`.
 */
 @property (class, nonatomic, copy, null_resettable) NSString *graphAPIVersion;
+
+/**
+Set the data processing options.
+
+@param options list of options
+*/
++ (void)setDataProcessingOptions:(nullable NSArray<NSString *> *)options;
+
+/**
+Set the data processing options.
+
+@param options list of the options
+@param country code of the country
+@param state code of the state
+*/
++ (void)setDataProcessingOptions:(nullable NSArray<NSString *> *)options
+                         country:(int)country
+                           state:(int)state;
 
 /**
  Enable a particular Facebook SDK logging behavior.

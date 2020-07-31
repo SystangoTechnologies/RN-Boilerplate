@@ -16,18 +16,22 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#import "TargetConditionals.h"
+
+#if !TARGET_OS_TV
+
 #import "FBSDKEventBindingManager.h"
 
 #import <objc/runtime.h>
 
 #import <UIKit/UIKit.h>
 
-#import "FBSDKCodelessMacros.h"
 #import "FBSDKCodelessPathComponent.h"
 #import "FBSDKEventBinding.h"
 #import "FBSDKSwizzler.h"
 #import "FBSDKTypeUtility.h"
 #import "FBSDKViewHierarchy.h"
+#import "FBSDKViewHierarchyMacros.h"
 
 #define ReactNativeTargetKey          @"target"
 #define ReactNativeTouchEndEventName  @"touchEnd"
@@ -36,18 +40,6 @@
 #define ReactNativeClassRCTImageView  "RCTImageVIew"
 #define ReactNativeClassRCTTouchEvent "RCTTouchEvent"
 #define ReactNativeClassRCTTouchHandler "RCTTouchHandler"
-
-static void fb_dispatch_on_main_thread(dispatch_block_t block) {
-  if ([NSThread isMainThread]) {
-    block();
-  } else {
-    dispatch_async(dispatch_get_main_queue(), block);
-  }
-}
-
-static void fb_dispatch_on_default_thread(dispatch_block_t block) {
-  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), block);
-}
 
 @interface FBSDKEventBindingManager ()
 {
@@ -99,7 +91,7 @@ static void fb_dispatch_on_default_thread(dispatch_block_t block) {
 
   for (NSDictionary *json in array) {
     FBSDKEventBinding *binding = [[FBSDKEventBinding alloc] initWithJSON:json];
-    [result addObject:binding];
+    [FBSDKTypeUtility array:result addObject:binding];
   }
 
   return [result copy];
@@ -112,7 +104,7 @@ static void fb_dispatch_on_default_thread(dispatch_block_t block) {
     NSMutableArray *bindings = [NSMutableArray array];
     for (NSDictionary *d in eventBindingsDict) {
       FBSDKEventBinding *e = [[FBSDKEventBinding alloc] initWithJSON:d];
-      [bindings addObject:e];
+      [FBSDKTypeUtility array:bindings addObject:e];
     }
     eventBindings = [bindings copy];
   }
@@ -307,7 +299,7 @@ static void fb_dispatch_on_default_thread(dispatch_block_t block) {
               if (view) {
                 NSNumber *reactTag = [FBSDKViewHierarchy getViewReactTag:view];
                 if (reactTag != nil) {
-                  self->reactBindings[reactTag] = binding;
+                  [FBSDKTypeUtility dictionary:self->reactBindings setObject:binding forKey:reactTag];
                 }
               }
             });
@@ -389,6 +381,21 @@ static void fb_dispatch_on_default_thread(dispatch_block_t block) {
 
 #pragma clang diagnostic pop
 - (void)updateBindings:(NSArray *)bindings {
+  if (eventBindings.count > 0 && eventBindings.count == bindings.count) {
+    // Check whether event bindings are the same
+    BOOL isSame = YES;
+    for (int i = 0; i < eventBindings.count; i++) {
+      if (![[FBSDKTypeUtility array:eventBindings objectAtIndex:i] isEqualToBinding:[FBSDKTypeUtility array:bindings objectAtIndex:i]]) {
+        isSame = NO;
+        break;
+      }
+    }
+
+    if (isSame) {
+      return;
+    }
+  }
+
   eventBindings = bindings;
   [reactBindings removeAllObjects];
   if (!isStarted) {
@@ -401,3 +408,5 @@ static void fb_dispatch_on_default_thread(dispatch_block_t block) {
 }
 
 @end
+
+#endif

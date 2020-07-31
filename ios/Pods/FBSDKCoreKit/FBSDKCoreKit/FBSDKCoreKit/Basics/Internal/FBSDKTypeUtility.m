@@ -27,6 +27,32 @@
   return (NSArray *)[self _objectValue:object ofClass:[NSArray class]];
 }
 
++ (nullable id)array:(NSArray *)array objectAtIndex:(NSUInteger)index
+{
+  if ([self arrayValue:array] && index < array.count) {
+    return [array objectAtIndex:index];
+  }
+
+  return nil;
+}
+
++ (void)array:(NSMutableArray *)array addObject:(id)object
+{
+  if (object && [array isKindOfClass:NSMutableArray.class]) {
+    [array addObject:object];
+  }
+}
+
++ (void)array:(NSMutableArray *)array addObject:(nullable id)object atIndex:(NSUInteger)index {
+  if (object && [array isKindOfClass:NSMutableArray.class]) {
+    if (index < array.count) {
+      [array insertObject:object atIndex:index];
+    } else if (index == array.count) {
+      [array addObject:object];
+    }
+  }
+}
+
 + (BOOL)boolValue:(id)object
 {
   if ([object isKindOfClass:[NSNumber class]]) {
@@ -43,6 +69,37 @@
 + (NSDictionary *)dictionaryValue:(id)object
 {
   return (NSDictionary *)[self _objectValue:object ofClass:[NSDictionary class]];
+}
+
++ (id)dictionary:(NSDictionary *)dictionary objectForKey:(NSString *)key ofType:(Class)type
+{
+  id potentialValue = [[self dictionaryValue:dictionary] objectForKey:key];
+
+  if ([potentialValue isKindOfClass:type]) {
+    return potentialValue;
+  } else {
+    return nil;
+  }
+}
+
++ (void)dictionary:(NSMutableDictionary *)dictionary setObject:(id)object forKey:(id<NSCopying>)key
+{
+  if (object && key) {
+    dictionary[key] = object;
+  }
+}
+
++ (void)dictionary:(NSDictionary *)dictionary enumerateKeysAndObjectsUsingBlock:(void (NS_NOESCAPE ^)(id key, id obj, BOOL *stop))block
+{
+  NSDictionary *validDictionary = [self dictionaryValue:dictionary];
+  if (validDictionary) {
+    [validDictionary enumerateKeysAndObjectsUsingBlock:block];
+  }
+}
+
++ (NSNumber *)numberValue:(id)object
+{
+  return [self _objectValue:object ofClass:NSNumber.class];
 }
 
 + (NSInteger)integerValue:(id)object
@@ -109,6 +166,40 @@
   } else {
     return nil;
   }
+}
+
++ (BOOL)isValidJSONObject:(id)obj
+{
+  return [NSJSONSerialization isValidJSONObject:obj];
+}
+
++ (NSData *)dataWithJSONObject:(id)obj options:(NSJSONWritingOptions)opt error:(NSError *__autoreleasing  _Nullable *)error
+{
+  NSData *data;
+
+  @try {
+    data = [NSJSONSerialization dataWithJSONObject:obj options:opt error:error];
+  }
+  @catch (NSException *exception) {
+     NSLog(@"FBSDKJSONSerialization - dataWithJSONObject:options:error failed: %@", exception.reason);
+  }
+  return data;
+}
+
++ (id)JSONObjectWithData:(NSData *)data options:(NSJSONReadingOptions)opt error:(NSError *__autoreleasing  _Nullable *)error
+{
+  if (![data isKindOfClass:NSData.class]) {
+    return nil;
+  }
+
+  id object;
+  @try {
+     object = [NSJSONSerialization JSONObjectWithData:data options:opt error:error];
+  }
+  @catch (NSException *exception) {
+     NSLog(@"FBSDKJSONSerialization - JSONObjectWithData:options:error failed: %@", exception.reason);
+  }
+  return object;
 }
 
 #pragma mark - Helper Methods

@@ -1,6 +1,6 @@
 {
   "name": "react-native-fbsdk",
-  "version": "1.0.4",
+  "version": "2.0.0",
   "summary": "Facebook SDK support for React Native apps.",
   "requires_arc": true,
   "authors": {
@@ -10,10 +10,10 @@
   "homepage": "https://github.com/facebook/react-native-fbsdk/",
   "source": {
     "git": "https://github.com/facebook/react-native-fbsdk.git",
-    "tag": "v1.0.4"
+    "tag": "v2.0.0"
   },
   "platforms": {
-    "ios": "7.0"
+    "ios": "8.0"
   },
   "dependencies": {
     "React": [
@@ -25,7 +25,7 @@
       "name": "Core",
       "dependencies": {
         "FBSDKCoreKit": [
-          "~> 5.5"
+          "~> 7.0"
         ]
       },
       "source_files": "ios/RCTFBSDK/core/*.{h,m}"
@@ -34,7 +34,7 @@
       "name": "Login",
       "dependencies": {
         "FBSDKLoginKit": [
-          "~> 5.5"
+          "~> 7.0"
         ]
       },
       "source_files": "ios/RCTFBSDK/login/*.{h,m}"
@@ -43,7 +43,7 @@
       "name": "Share",
       "dependencies": {
         "FBSDKShareKit": [
-          "~> 5.5"
+          "~> 7.0"
         ]
       },
       "source_files": "ios/RCTFBSDK/share/*.{h,m}"

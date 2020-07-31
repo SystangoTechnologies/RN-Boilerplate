@@ -16,12 +16,19 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#import "TargetConditionals.h"
+
+#if !TARGET_OS_TV
+
 #import "FBSDKLoginUtility.h"
 
-#import <FBSDKCoreKit/FBSDKConstants.h>
-#import <FBSDKCoreKit/FBSDKSettings.h>
+#if SWIFT_PACKAGE
+@import FBSDKCoreKit;
+#else
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#endif
 
-#ifdef COCOAPODS
+#ifdef FBSDKCOCOAPODS
 #import <FBSDKCoreKit/FBSDKCoreKit+Internal.h>
 #else
 #import "FBSDKCoreKit+Internal.h"
@@ -60,7 +67,7 @@
 
   NSString *userID = [[self class] userIDFromSignedRequest:params[@"signed_request"]];
   if (userID) {
-    params[@"user_id"] = userID;
+    [FBSDKTypeUtility dictionary:params setObject:userID forKey:@"user_id"];
   }
 
   return params;
@@ -76,9 +83,9 @@
   NSString *userID = nil;
 
   if (signatureAndPayload.count == 2) {
-    NSData *data = [FBSDKBase64 decodeAsData:signatureAndPayload[1]];
+    NSData *data = [FBSDKBase64 decodeAsData:[FBSDKTypeUtility array:signatureAndPayload objectAtIndex:1]];
     if (data) {
-      NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+      NSDictionary *dictionary = [FBSDKTypeUtility JSONObjectWithData:data options:0 error:nil];
       userID = dictionary[@"user_id"];
     }
   }
@@ -86,3 +93,5 @@
 }
 
 @end
+
+#endif

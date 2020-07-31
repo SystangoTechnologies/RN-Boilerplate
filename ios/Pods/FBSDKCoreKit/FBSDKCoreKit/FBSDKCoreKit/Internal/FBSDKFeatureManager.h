@@ -42,15 +42,23 @@ typedef NS_ENUM(NSUInteger, FBSDKFeature)
   // Features in CoreKit
   /** Essential of CoreKit */
   FBSDKFeatureCore = 0x00000000,
-
+  /** App Events */
   FBSDKFeatureAppEvents = 0x00010000,
   FBSDKFeatureCodelessEvents = 0x00010100,
   FBSDKFeatureRestrictiveDataFiltering = 0x00010200,
   FBSDKFeatureAAM = 0x00010300,
+  FBSDKFeaturePrivacyProtection = 0x00010400,
+  FBSDKFeatureSuggestedEvents = 0x00010401,
+  FBSDKFeatureIntelligentIntegrity = 0x00010402,
+  FBSDKFeatureModelRequest = 0x00010403,
+  FBSDKFeatureEventDeactivation = 0x00010500,
+  /** Instrument */
   FBSDKFeatureInstrument = 0x00020000,
   FBSDKFeatureCrashReport = 0x00020100,
+  FBSDKFeatureCrashShield = 0x00020101,
   FBSDKFeatureErrorReport = 0x00020200,
-
+  /** Monitoring */
+  FBSDKFeatureMonitoring = 0x00030000,
 
   // Features in LoginKit
   /** Essential of LoginKit */
@@ -60,9 +68,9 @@ typedef NS_ENUM(NSUInteger, FBSDKFeature)
   /** Essential of ShareKit */
   FBDSDKFeatureShare = 0x02000000,
 
-  // Features in PlacesKit
-  /** Essential of PlacesKit */
-  FBSDKFeaturePlaces = 0x03000000,
+  // Features in GamingServicesKit
+  /** Essential of GamingServicesKit */
+  FBDSDKFeatureGamingServices = 0x03000000,
 
 } NS_SWIFT_NAME(SDKFeature);
 
@@ -72,6 +80,8 @@ typedef void (^FBSDKFeatureManagerBlock)(BOOL enabled);
 
 + (void)checkFeature:(FBSDKFeature)feature
      completionBlock:(FBSDKFeatureManagerBlock)completionBlock;
++ (BOOL)isEnabled:(FBSDKFeature)feature;
++ (void)disableFeature:(NSString *)featureName;
 
 @end
 

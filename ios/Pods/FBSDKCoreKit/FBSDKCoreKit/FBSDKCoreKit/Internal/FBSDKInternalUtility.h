@@ -17,7 +17,6 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
 
 #import "FBSDKCoreKit+Internal.h"
 
@@ -282,6 +281,13 @@ NS_SWIFT_NAME(InternalUtility)
   returns currently displayed top view controller.
  */
 + (nullable UIViewController *)topMostViewController;
+
+#if !TARGET_OS_TV
+/**
+  returns interface orientation for the key window.
+ */
++ (UIInterfaceOrientation)statusBarOrientation;
+#endif
 
 /**
   Converts NSData to a hexadecimal UTF8 String.

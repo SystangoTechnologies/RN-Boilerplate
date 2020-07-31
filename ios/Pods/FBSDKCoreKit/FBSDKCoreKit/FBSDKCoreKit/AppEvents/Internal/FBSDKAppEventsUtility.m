@@ -31,6 +31,7 @@
 #import "FBSDKInternalUtility.h"
 #import "FBSDKLogger.h"
 #import "FBSDKSettings.h"
+#import "FBSDKSettings+Internal.h"
 #import "FBSDKTimeSpentData.h"
 
 #define FBSDK_APPEVENTSUTILITY_ANONYMOUSIDFILENAME @"com-facebook-sdk-PersistedAnonymousID.json"
@@ -40,40 +41,57 @@
 @implementation FBSDKAppEventsUtility
 
 + (NSMutableDictionary *)activityParametersDictionaryForEvent:(NSString *)eventCategory
-                                           implicitEventsOnly:(BOOL)implicitEventsOnly
                                     shouldAccessAdvertisingID:(BOOL)shouldAccessAdvertisingID {
   NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
-  parameters[@"event"] = eventCategory;
+  [FBSDKTypeUtility dictionary:parameters setObject:eventCategory forKey:@"event"];
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_7_0
   NSString *attributionID = [[self class] attributionID];  // Only present on iOS 6 and below.
   [FBSDKBasicUtility dictionary:parameters setObject:attributionID forKey:@"attribution"];
 #endif
 
-  if (!implicitEventsOnly && shouldAccessAdvertisingID) {
+  if (shouldAccessAdvertisingID) {
     NSString *advertiserID = [[self class] advertiserID];
-    [FBSDKBasicUtility dictionary:parameters setObject:advertiserID forKey:@"advertiser_id"];
+    [FBSDKTypeUtility dictionary:parameters setObject:advertiserID forKey:@"advertiser_id"];
   }
 
-  parameters[FBSDK_APPEVENTSUTILITY_ANONYMOUSID_KEY] = [FBSDKBasicUtility anonymousID];
+  [FBSDKTypeUtility dictionary:parameters setObject:[FBSDKBasicUtility anonymousID] forKey:FBSDK_APPEVENTSUTILITY_ANONYMOUSID_KEY];
 
   FBSDKAdvertisingTrackingStatus advertisingTrackingStatus = [[self class] advertisingTrackingStatus];
   if (advertisingTrackingStatus != FBSDKAdvertisingTrackingUnspecified) {
     BOOL allowed = (advertisingTrackingStatus == FBSDKAdvertisingTrackingAllowed);
-    parameters[@"advertiser_tracking_enabled"] = @(allowed).stringValue;
+    [FBSDKTypeUtility dictionary:parameters setObject:@(allowed).stringValue forKey:@"advertiser_tracking_enabled"];
   }
   if (advertisingTrackingStatus == FBSDKAdvertisingTrackingAllowed) {
     NSString *userData = [FBSDKAppEvents getUserData];
     if (userData){
-      parameters[@"ud"] = userData;
+      [FBSDKTypeUtility dictionary:parameters setObject:userData forKey:@"ud"];
     }
   }
 
-  parameters[@"application_tracking_enabled"] = @(!FBSDKSettings.limitEventAndDataUsage).stringValue;
+  [FBSDKTypeUtility dictionary:parameters setObject:@(!FBSDKSettings.limitEventAndDataUsage).stringValue forKey:@"application_tracking_enabled"];
+  [FBSDKTypeUtility dictionary:parameters setObject:@(FBSDKSettings.advertiserIDCollectionEnabled).stringValue forKey:@"advertiser_id_collection_enabled"];
 
   NSString *userID = [FBSDKAppEvents userID];
   if (userID) {
-    parameters[@"app_user_id"] = userID;
+    [FBSDKTypeUtility dictionary:parameters setObject:userID forKey:@"app_user_id"];
+  }
+
+  NSDictionary<NSString *, id> *dataProcessingOptions = [FBSDKSettings dataProcessingOptions];
+  if (dataProcessingOptions) {
+    NSArray<NSString *> *options = (NSArray<NSString *> *)dataProcessingOptions[DATA_PROCESSING_OPTIONS];
+    if (options && [options isKindOfClass:NSArray.class]) {
+      NSString *optionsString = [FBSDKBasicUtility JSONStringForObject:options error:nil invalidObjectHandler:nil];
+      [FBSDKTypeUtility dictionary:parameters
+                         setObject:optionsString
+                            forKey:DATA_PROCESSING_OPTIONS];
+    }
+    [FBSDKTypeUtility dictionary:parameters
+                       setObject:dataProcessingOptions[DATA_PROCESSING_OPTIONS_COUNTRY]
+                          forKey:DATA_PROCESSING_OPTIONS_COUNTRY];
+    [FBSDKTypeUtility dictionary:parameters
+                       setObject:dataProcessingOptions[DATA_PROCESSING_OPTIONS_STATE]
+                          forKey:DATA_PROCESSING_OPTIONS_STATE];
   }
 
   [FBSDKAppEventsDeviceInfo extendDictionaryWithDeviceInfo:parameters];
@@ -93,7 +111,7 @@
   });
 
   if (urlSchemes.count > 0) {
-    parameters[@"url_schemes"] = [FBSDKBasicUtility JSONStringForObject:urlSchemes error:NULL invalidObjectHandler:NULL];
+    [FBSDKTypeUtility dictionary:parameters setObject:[FBSDKBasicUtility JSONStringForObject:urlSchemes error:NULL invalidObjectHandler:NULL] forKey:@"url_schemes"];
   }
 
   return parameters;

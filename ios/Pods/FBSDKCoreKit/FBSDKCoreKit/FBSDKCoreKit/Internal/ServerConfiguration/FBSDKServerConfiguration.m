@@ -18,8 +18,11 @@
 
 #import "FBSDKServerConfiguration.h"
 #import "FBSDKServerConfiguration+Internal.h"
-
+#import "FBSDKMonitoringConfiguration.h"
 #import "FBSDKInternalUtility.h"
+
+// one minute
+#define DEFAULT_SESSION_TIMEOUT_INTERVAL 60
 
 #define FBSDK_SERVER_CONFIGURATION_ADVERTISING_ID_ENABLED_KEY @"advertisingIDEnabled"
 #define FBSDK_SERVER_CONFIGURATION_APP_ID_KEY @"appID"
@@ -33,8 +36,6 @@
 #define FBSDK_SERVER_CONFIGURATION_CODELESS_EVENTS_ENABLED_KEY @"codelessEventsEnabled"
 #define FBSDK_SERVER_CONFIGURATION_LOGIN_TOOLTIP_ENABLED_KEY @"loginTooltipEnabled"
 #define FBSDK_SERVER_CONFIGURATION_LOGIN_TOOLTIP_TEXT_KEY @"loginTooltipText"
-#define FBSDK_SERVER_CONFIGURATION_SYSTEM_AUTHENTICATION_ENABLED_KEY @"systemAuthenticationEnabled"
-#define FBSDK_SERVER_CONFIGURATION_NATIVE_AUTH_FLOW_ENABLED_KEY @"nativeAuthFlowEnabled"
 #define FBSDK_SERVER_CONFIGURATION_TIMESTAMP_KEY @"timestamp"
 #define FBSDK_SERVER_CONFIGURATION_SESSION_TIMEOUT_INTERVAL @"sessionTimeoutInterval"
 #define FBSDK_SERVER_CONFIGURATION_LOGGING_TOKEN @"loggingToken"
@@ -45,8 +46,10 @@
 #define FBSDK_SERVER_CONFIGURATION_EVENT_BINDINGS  @"eventBindings"
 #define FBSDK_SERVER_CONFIGURATION_RESTRICTIVE_PARAMS @"restrictiveParams"
 #define FBSDK_SERVER_CONFIGURATION_AAM_RULES @"AAMRules"
+#define FBSDK_SERVER_CONFIGURATION_SUGGESTED_EVENTS_SETTING @"suggestedEventsSetting"
 #define FBSDK_SERVER_CONFIGURATION_VERSION_KEY @"version"
 #define FBSDK_SERVER_CONFIGURATION_TRACK_UNINSTALL_ENABLED_KEY @"trackAppUninstallEnabled"
+#define FBSDK_SERVER_CONFIGURATION_MONITORING_CONFIGURATION_KEY @"monitoringConfiguration"
 
 #pragma mark - Dialog Names
 
@@ -88,8 +91,6 @@ const NSInteger FBSDKServerConfigurationVersion = 2;
        implicitLoggingEnabled:(BOOL)implicitLoggingEnabled
 implicitPurchaseLoggingEnabled:(BOOL)implicitPurchaseLoggingEnabled
         codelessEventsEnabled:(BOOL)codelessEventsEnabled
-  systemAuthenticationEnabled:(BOOL)systemAuthenticationEnabled
-        nativeAuthFlowEnabled:(BOOL)nativeAuthFlowEnabled
      uninstallTrackingEnabled:(BOOL)uninstallTrackingEnabled
          dialogConfigurations:(NSDictionary *)dialogConfigurations
                   dialogFlows:(NSDictionary *)dialogFlows
@@ -105,6 +106,8 @@ implicitPurchaseLoggingEnabled:(BOOL)implicitPurchaseLoggingEnabled
                 eventBindings:(NSArray *)eventBindings
             restrictiveParams:(NSDictionary<NSString *, id> *)restrictiveParams
                      AAMRules:(NSDictionary<NSString *, id> *)AAMRules
+       suggestedEventsSetting:(NSDictionary<NSString *,id> *)suggestedEventsSetting
+      monitoringConfiguration:(FBSDKMonitoringConfiguration *)monitoringConfiguration
 {
   if ((self = [super init])) {
     _appID = [appID copy];
@@ -116,14 +119,12 @@ implicitPurchaseLoggingEnabled:(BOOL)implicitPurchaseLoggingEnabled
     _implicitLoggingEnabled = implicitLoggingEnabled;
     _implicitPurchaseLoggingEnabled = implicitPurchaseLoggingEnabled;
     _codelessEventsEnabled = codelessEventsEnabled;
-    _systemAuthenticationEnabled = systemAuthenticationEnabled;
     _uninstallTrackingEnabled = uninstallTrackingEnabled;
-    _nativeAuthFlowEnabled = nativeAuthFlowEnabled;
     _dialogConfigurations = [dialogConfigurations copy];
     _dialogFlows = [dialogFlows copy];
     _timestamp = [timestamp copy];
     _errorConfiguration = [errorConfiguration copy];
-    _sessionTimoutInterval = sessionTimeoutInterval;
+    _sessionTimoutInterval = sessionTimeoutInterval ?: DEFAULT_SESSION_TIMEOUT_INTERVAL;
     _defaults = defaults;
     _loggingToken = loggingToken;
     _smartLoginOptions = smartLoginOptions;
@@ -133,9 +134,63 @@ implicitPurchaseLoggingEnabled:(BOOL)implicitPurchaseLoggingEnabled
     _eventBindings = eventBindings;
     _restrictiveParams = restrictiveParams;
     _AAMRules = AAMRules;
+    _suggestedEventsSetting = suggestedEventsSetting;
     _version = FBSDKServerConfigurationVersion;
+    _monitoringConfiguration = monitoringConfiguration;
   }
   return self;
+}
+
++ (FBSDKServerConfiguration *)defaultServerConfigurationForAppID:(NSString *)appID
+{
+  // Use a default configuration while we do not have a configuration back from the server. This allows us to set
+  // the default values for any of the dialog sets or anything else in a centralized location while we are waiting for
+  // the server to respond.
+  static FBSDKServerConfiguration *_defaultServerConfiguration = nil;
+  if (![_defaultServerConfiguration.appID isEqualToString:appID]) {
+    // Bypass the native dialog flow for iOS 9+, as it produces a series of additional confirmation dialogs that lead to
+    // extra friction that is not desirable.
+      NSOperatingSystemVersion iOS9Version = { .majorVersion = 9, .minorVersion = 0, .patchVersion = 0 };
+    BOOL useNativeFlow = ![FBSDKInternalUtility isOSRunTimeVersionAtLeast:iOS9Version];
+    // Also enable SFSafariViewController by default.
+    NSDictionary *dialogFlows = @{
+                                  FBSDKDialogConfigurationNameDefault: @{
+                                      FBSDKDialogConfigurationFeatureUseNativeFlow: @(useNativeFlow),
+                                      FBSDKDialogConfigurationFeatureUseSafariViewController: @YES,
+                                      },
+                                  FBSDKDialogConfigurationNameMessage: @{
+                                      FBSDKDialogConfigurationFeatureUseNativeFlow: @YES,
+                                      },
+                                  };
+    _defaultServerConfiguration = [[FBSDKServerConfiguration alloc] initWithAppID:appID
+                                                                          appName:nil
+                                                              loginTooltipEnabled:NO
+                                                                 loginTooltipText:nil
+                                                                 defaultShareMode:nil
+                                                             advertisingIDEnabled:NO
+                                                           implicitLoggingEnabled:NO
+                                                   implicitPurchaseLoggingEnabled:NO
+                                                            codelessEventsEnabled:NO
+                                                         uninstallTrackingEnabled:NO
+                                                             dialogConfigurations:nil
+                                                                      dialogFlows:dialogFlows
+                                                                        timestamp:nil
+                                                               errorConfiguration:nil
+                                                           sessionTimeoutInterval:DEFAULT_SESSION_TIMEOUT_INTERVAL
+                                                                         defaults:YES
+                                                                     loggingToken:nil
+                                                                smartLoginOptions:FBSDKServerConfigurationSmartLoginOptionsUnknown
+                                                        smartLoginBookmarkIconURL:nil
+                                                            smartLoginMenuIconURL:nil
+                                                                    updateMessage:nil
+                                                                    eventBindings:nil
+                                                                restrictiveParams:nil
+                                                                         AAMRules:nil
+                                                           suggestedEventsSetting:nil
+                                                          monitoringConfiguration:FBSDKMonitoringConfiguration.defaultConfiguration
+                                   ];
+  }
+  return _defaultServerConfiguration;
 }
 
 #pragma mark - Public Methods
@@ -191,12 +246,9 @@ implicitPurchaseLoggingEnabled:(BOOL)implicitPurchaseLoggingEnabled
   [decoder decodeBoolForKey:FBSDK_SERVER_CONFIGURATION_IMPLICIT_PURCHASE_LOGGING_ENABLED_KEY];
   BOOL codelessEventsEnabled =
   [decoder decodeBoolForKey:FBSDK_SERVER_CONFIGURATION_CODELESS_EVENTS_ENABLED_KEY];
-  BOOL systemAuthenticationEnabled =
-  [decoder decodeBoolForKey:FBSDK_SERVER_CONFIGURATION_SYSTEM_AUTHENTICATION_ENABLED_KEY];
   BOOL uninstallTrackingEnabled =
   [decoder decodeBoolForKey:FBSDK_SERVER_CONFIGURATION_TRACK_UNINSTALL_ENABLED_KEY];
   FBSDKServerConfigurationSmartLoginOptions smartLoginOptions = [decoder decodeIntegerForKey:FBSDK_SERVER_CONFIGURATION_SMART_LOGIN_OPTIONS_KEY];
-  BOOL nativeAuthFlowEnabled = [decoder decodeBoolForKey:FBSDK_SERVER_CONFIGURATION_NATIVE_AUTH_FLOW_ENABLED_KEY];
   NSDate *timestamp = [decoder decodeObjectOfClass:[NSDate class] forKey:FBSDK_SERVER_CONFIGURATION_TIMESTAMP_KEY];
   NSSet *dialogConfigurationsClasses = [[NSSet alloc] initWithObjects:
                                         [NSDictionary class],
@@ -220,7 +272,9 @@ implicitPurchaseLoggingEnabled:(BOOL)implicitPurchaseLoggingEnabled
   NSArray *eventBindings = [decoder decodeObjectOfClass:[NSArray class] forKey:FBSDK_SERVER_CONFIGURATION_EVENT_BINDINGS];
   NSDictionary<NSString *, id> *restrictiveParams = [decoder decodeObjectOfClass:[NSDictionary class] forKey:FBSDK_SERVER_CONFIGURATION_RESTRICTIVE_PARAMS];
   NSDictionary<NSString *, id> *AAMRules = [decoder decodeObjectOfClass:[NSDictionary class] forKey:FBSDK_SERVER_CONFIGURATION_AAM_RULES];
+  NSDictionary<NSString *, id> *suggestedEventsSetting = [decoder decodeObjectOfClass:[NSDictionary class] forKey:FBSDK_SERVER_CONFIGURATION_SUGGESTED_EVENTS_SETTING];
   NSInteger version = [decoder decodeIntegerForKey:FBSDK_SERVER_CONFIGURATION_VERSION_KEY];
+  FBSDKMonitoringConfiguration *monitoringConfiguration = [decoder decodeObjectOfClass:FBSDKMonitoringConfiguration.class forKey:FBSDK_SERVER_CONFIGURATION_MONITORING_CONFIGURATION_KEY];
   FBSDKServerConfiguration *configuration = [self initWithAppID:appID
                                                         appName:appName
                                             loginTooltipEnabled:loginTooltipEnabled
@@ -230,8 +284,6 @@ implicitPurchaseLoggingEnabled:(BOOL)implicitPurchaseLoggingEnabled
                                          implicitLoggingEnabled:implicitLoggingEnabled
                                  implicitPurchaseLoggingEnabled:implicitPurchaseLoggingEnabled
                                           codelessEventsEnabled:codelessEventsEnabled
-                                    systemAuthenticationEnabled:systemAuthenticationEnabled
-                                          nativeAuthFlowEnabled:nativeAuthFlowEnabled
                                        uninstallTrackingEnabled:uninstallTrackingEnabled
                                            dialogConfigurations:dialogConfigurations
                                                     dialogFlows:dialogFlows
@@ -247,6 +299,8 @@ implicitPurchaseLoggingEnabled:(BOOL)implicitPurchaseLoggingEnabled
                                                   eventBindings:eventBindings
                                               restrictiveParams:restrictiveParams
                                                        AAMRules:AAMRules
+                                         suggestedEventsSetting:suggestedEventsSetting
+                                        monitoringConfiguration:monitoringConfiguration
                                              ];
   configuration->_version = version;
   return configuration;
@@ -270,8 +324,6 @@ implicitPurchaseLoggingEnabled:(BOOL)implicitPurchaseLoggingEnabled
   [encoder encodeBool:_uninstallTrackingEnabled
                forKey:FBSDK_SERVER_CONFIGURATION_TRACK_UNINSTALL_ENABLED_KEY];
   [encoder encodeObject:_loginTooltipText forKey:FBSDK_SERVER_CONFIGURATION_LOGIN_TOOLTIP_TEXT_KEY];
-  [encoder encodeBool:_nativeAuthFlowEnabled forKey:FBSDK_SERVER_CONFIGURATION_NATIVE_AUTH_FLOW_ENABLED_KEY];
-  [encoder encodeBool:_systemAuthenticationEnabled forKey:FBSDK_SERVER_CONFIGURATION_SYSTEM_AUTHENTICATION_ENABLED_KEY];
   [encoder encodeObject:_timestamp forKey:FBSDK_SERVER_CONFIGURATION_TIMESTAMP_KEY];
   [encoder encodeDouble:_sessionTimoutInterval forKey:FBSDK_SERVER_CONFIGURATION_SESSION_TIMEOUT_INTERVAL];
   [encoder encodeObject:_loggingToken forKey:FBSDK_SERVER_CONFIGURATION_LOGGING_TOKEN];
@@ -282,7 +334,9 @@ implicitPurchaseLoggingEnabled:(BOOL)implicitPurchaseLoggingEnabled
   [encoder encodeObject:_eventBindings forKey:FBSDK_SERVER_CONFIGURATION_EVENT_BINDINGS];
   [encoder encodeObject:_restrictiveParams forKey:FBSDK_SERVER_CONFIGURATION_RESTRICTIVE_PARAMS];
   [encoder encodeObject:_AAMRules forKey:FBSDK_SERVER_CONFIGURATION_AAM_RULES];
+  [encoder encodeObject:_suggestedEventsSetting forKey:FBSDK_SERVER_CONFIGURATION_SUGGESTED_EVENTS_SETTING];
   [encoder encodeInteger:_version forKey:FBSDK_SERVER_CONFIGURATION_VERSION_KEY];
+  [encoder encodeObject:_monitoringConfiguration forKey:FBSDK_SERVER_CONFIGURATION_MONITORING_CONFIGURATION_KEY];
 }
 
 #pragma mark - NSCopying
@@ -290,6 +344,17 @@ implicitPurchaseLoggingEnabled:(BOOL)implicitPurchaseLoggingEnabled
 - (id)copyWithZone:(NSZone *)zone
 {
   return self;
+}
+
+// Private accessors for unit tests
+- (NSDictionary *)dialogConfigurations
+{
+  return _dialogConfigurations;
+}
+
+- (NSDictionary *)dialogFlows
+{
+  return _dialogFlows;
 }
 
 @end

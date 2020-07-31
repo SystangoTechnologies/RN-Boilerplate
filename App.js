@@ -6,7 +6,7 @@
  * @flow
  */
 
-import React, {Fragment} from 'react';
+import React from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -31,12 +31,13 @@ Sentry.config('https://2a5c220c8b6a499882a908969651fef8@sentry.io/1760827').inst
 
 const App = () => {
   return (
-    <Fragment>
+    <>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView>
         <ScrollView
           contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
+          style={styles.scrollView}
+        >
           <Header />
           {global.HermesInternal == null ? null : (
             <View style={styles.engine}>
@@ -47,7 +48,11 @@ const App = () => {
             <View style={styles.sectionContainer}>
               <Text style={styles.sectionTitle}>Step One</Text>
               <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
+                Edit
+                {' '}
+                <Text style={styles.highlight}>App.js</Text>
+                {' '}
+to change this
                 screen and then come back to see your edits.
               </Text>
             </View>
@@ -73,7 +78,7 @@ const App = () => {
           </View>
         </ScrollView>
       </SafeAreaView>
-    </Fragment>
+    </>
   );
 };
 

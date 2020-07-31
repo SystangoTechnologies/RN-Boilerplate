@@ -16,6 +16,10 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#import "TargetConditionals.h"
+
+#if !TARGET_OS_TV
+
 #import "FBSDKAppLinkUtility.h"
 
 #import "FBSDKAppEventsUtility.h"
@@ -41,7 +45,6 @@ static NSString *const FBSDKDeferredAppLinkEvent = @"DEFERRED_APP_LINK";
   // before we make this call.
   NSMutableDictionary *deferredAppLinkParameters =
   [FBSDKAppEventsUtility activityParametersDictionaryForEvent:FBSDKDeferredAppLinkEvent
-                                           implicitEventsOnly:NO
                                     shouldAccessAdvertisingID:YES];
 
   FBSDKGraphRequest *deferredAppLinkRequest = [[FBSDKGraphRequest alloc] initWithGraphPath:[NSString stringWithFormat:@"%@/activities", appID, nil]
@@ -99,4 +102,23 @@ static NSString *const FBSDKDeferredAppLinkEvent = @"DEFERRED_APP_LINK";
   return nil;
 
 }
+
++ (BOOL)isMatchURLScheme:(NSString *)scheme
+{
+  if (!scheme) {
+    return NO;
+  }
+  for(NSDictionary *urlType in [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleURLTypes"])
+  {
+    for(NSString *urlScheme in urlType[@"CFBundleURLSchemes"]) {
+      if([urlScheme caseInsensitiveCompare:scheme] == NSOrderedSame) {
+        return YES;
+      }
+    }
+  }
+  return NO;
+}
+
 @end
+
+#endif

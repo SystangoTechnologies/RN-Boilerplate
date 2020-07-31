@@ -134,6 +134,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
     splits {
         abi {
@@ -189,9 +190,7 @@ android {
 }
 
 dependencies {
-    implementation project(':react-native-google-signin')
     implementation project(':react-native-gesture-handler')
-    implementation project(':react-native-firebase')
     implementation project(':react-native-fbsdk')
     implementation project(':react-native-i18n')
     implementation project(':react-native-sentry')
@@ -199,6 +198,7 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation "com.google.firebase:firebase-analytics:17.0.1"
     implementation "com.google.firebase:firebase-messaging:20.0.0"
+    implementation 'com.android.support:multidex:1.0.3'
 
     if (enableHermes) {
       def hermesPath = "../../node_modules/hermesvm/android/";

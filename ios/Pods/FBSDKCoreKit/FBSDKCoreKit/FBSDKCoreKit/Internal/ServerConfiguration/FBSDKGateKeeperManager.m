@@ -59,6 +59,8 @@ static BOOL _requeryFinishedForAppStart;
   return _gateKeepers[key] ? [_gateKeepers[key] boolValue] : defaultValue;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 + (void)loadGateKeepers:(FBSDKGKManagerBlock)completionBlock
 {
   @synchronized(self) {
@@ -91,7 +93,7 @@ static BOOL _requeryFinishedForAppStart;
         completionBlock(nil);
       }
     } else {
-      [FBSDKBasicUtility array:_completionBlocks addObject:completionBlock];
+      [FBSDKTypeUtility array:_completionBlocks addObject:completionBlock];
       if (!_loadingGateKeepers) {
         _loadingGateKeepers = YES;
         FBSDKGraphRequest *request = [[self class] requestToLoadGateKeepers];
@@ -108,6 +110,7 @@ static BOOL _requeryFinishedForAppStart;
     }
   }
 }
+#pragma clang diagnostic pop
 
 #pragma mark - Internal Class Methods
 
@@ -130,6 +133,8 @@ static BOOL _requeryFinishedForAppStart;
 
 #pragma mark - Helper Class Methods
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 + (void)processLoadRequestResponse:(id)result error:(NSError *)error
 {
   @synchronized(self) {
@@ -154,7 +159,7 @@ static BOOL _requeryFinishedForAppStart;
           NSString *key = [FBSDKTypeUtility stringValue:entry[@"key"]];
           id value = entry[@"value"];
           if (entry != nil && key != nil && value != nil) {
-            gateKeeper[key] = value;
+            [FBSDKTypeUtility dictionary:gateKeeper setObject:value forKey:key];
           }
         }
         _gateKeepers = [gateKeeper copy];
@@ -171,6 +176,7 @@ static BOOL _requeryFinishedForAppStart;
     [self _didProcessGKFromNetwork:error];
   }
 }
+#pragma clang diagnostic pop
 
 + (void)_didProcessGKFromNetwork:(NSError *)error
 {

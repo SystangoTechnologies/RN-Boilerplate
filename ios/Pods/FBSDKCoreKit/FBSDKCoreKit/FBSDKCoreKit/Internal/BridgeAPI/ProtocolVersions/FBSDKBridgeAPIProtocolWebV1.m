@@ -16,6 +16,10 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#import "TargetConditionals.h"
+
+#if !TARGET_OS_TV
+
 #import "FBSDKBridgeAPIProtocolWebV1.h"
 
 #import <UIKit/UIKit.h>
@@ -42,7 +46,7 @@
                             error:(NSError *__autoreleasing *)errorRef
 {
   NSMutableDictionary *queryParameters = [[NSMutableDictionary alloc] initWithDictionary:parameters];
-  queryParameters[@"display"] = @"touch";
+  [FBSDKTypeUtility dictionary:queryParameters setObject:@"touch" forKey:@"display"];
   NSString *bridgeArgs = [FBSDKBasicUtility JSONStringForObject:@{ FBSDK_BRIDGE_API_PROTOCOL_WEB_V1_ACTION_ID_KEY: actionID }
                                                           error:NULL
                                            invalidObjectHandler:NULL];
@@ -51,7 +55,7 @@
                                                        path:methodName
                                             queryParameters:redirectQueryParameters
                                                       error:NULL];
-  [FBSDKBasicUtility dictionary:queryParameters setObject:redirectURL forKey:@"redirect_uri"];
+  [FBSDKTypeUtility dictionary:queryParameters setObject:redirectURL forKey:@"redirect_uri"];
   [queryParameters addEntriesFromDictionary:parameters];
   return [FBSDKInternalUtility facebookURLWithHostPrefix:@"m"
                                                     path:[@"/dialog/" stringByAppendingString:methodName]
@@ -113,3 +117,5 @@
 }
 
 @end
+
+#endif

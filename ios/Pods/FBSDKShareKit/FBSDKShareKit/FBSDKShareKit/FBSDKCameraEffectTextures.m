@@ -16,9 +16,13 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#import "TargetConditionals.h"
+
+#if !TARGET_OS_TV
+
 #import "FBSDKCameraEffectTextures.h"
 
-#ifdef COCOAPODS
+#ifdef FBSDKCOCOAPODS
 #import <FBSDKCoreKit/FBSDKCoreKit+Internal.h>
 #else
 #import "FBSDKCoreKit+Internal.h"
@@ -115,7 +119,7 @@ static NSString *const FBSDKCameraEffectTexturesTexturesKey = @"textures";
 - (void)_setValue:(id)value forKey:(NSString *)key
 {
   if (value) {
-    _textures[key] = value;
+    [FBSDKTypeUtility dictionary:_textures setObject:value forKey:key];
   } else {
     [_textures removeObjectForKey:key];
   }
@@ -134,3 +138,5 @@ static NSString *const FBSDKCameraEffectTexturesTexturesKey = @"textures";
 }
 
 @end
+
+#endif

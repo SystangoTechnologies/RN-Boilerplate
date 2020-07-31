@@ -17,6 +17,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #import "FBSDKLibAnalyzer.h"
+#import "FBSDKTypeUtility.h"
 
 #import <objc/runtime.h>
 
@@ -40,7 +41,9 @@ static NSMutableDictionary<NSString *, NSString *> *_methodMapping;
       [self addClass:object_getClass(class) isClassMethod:YES];
     }
   }
-  return [_methodMapping copy];
+  @synchronized (_methodMapping) {
+    return [_methodMapping copy];
+  }
 }
 
 #pragma mark - private methods
@@ -82,12 +85,12 @@ static NSMutableDictionary<NSString *, NSString *> *_methodMapping;
     if (prefixes.count > 0) {
       for (NSString *prefix in prefixes) {
         if ([className hasPrefix:prefix]) {
-          [classNames addObject:className];
+          [FBSDKTypeUtility array:classNames addObject:className];
           break;
         }
       }
     } else {
-      [classNames addObject:className];
+      [FBSDKTypeUtility array:classNames addObject:className];
     }
   }
   free(classes);
@@ -116,7 +119,9 @@ static NSMutableDictionary<NSString *, NSString *> *_methodMapping;
                               NSStringFromSelector(selector)];
 
       if (methodAddress && methodName) {
-        [_methodMapping setObject:methodName forKey:methodAddress];
+        @synchronized (_methodMapping) {
+          [FBSDKTypeUtility dictionary:_methodMapping setObject:methodName forKey:methodAddress];
+        }
       }
     }
   }
@@ -138,21 +143,26 @@ static NSMutableDictionary<NSString *, NSString *> *_methodMapping;
   NSMutableArray<NSString *> *symbolicatedCallstack = [NSMutableArray array];
 
   for (NSUInteger i = 0; i < callstack.count; i++){
-    NSString *rawAddress = [self getAddress:callstack[i]];
+    NSString *rawAddress = [self getAddress:[FBSDKTypeUtility array:callstack objectAtIndex:i]];
     NSString *addressString = [NSString stringWithFormat:@"0x%@",[rawAddress substringWithRange:NSMakeRange(rawAddress.length - 10, 10)]];
     NSString *methodAddress = [self searchMethod:addressString sortedAllAddress:sortedAllAddress];
 
     if (methodAddress) {
       containsFBSDKFunction = YES;
-      nonSDKMethodCount == 0 ?: [symbolicatedCallstack addObject:[NSString stringWithFormat:@"(%ld DEV METHODS)", (long)nonSDKMethodCount]];
+      nonSDKMethodCount == 0 ?: [FBSDKTypeUtility array:symbolicatedCallstack addObject:[NSString stringWithFormat:@"(%ld DEV METHODS)", (long)nonSDKMethodCount]];
       nonSDKMethodCount = 0;
-      NSString *methodName = [methodMapping objectForKey:methodAddress];
-      [symbolicatedCallstack addObject:[NSString stringWithFormat:@"%@%@", methodName, [self getOffset:addressString secondString:methodAddress]]];
+      NSString *methodName = [FBSDKTypeUtility dictionary:methodMapping objectForKey:methodAddress ofType:NSObject.class];
+
+      // filter out cxx_destruct
+      if ([methodName containsString:@".cxx_destruct"]) {
+        return nil;
+      }
+      [FBSDKTypeUtility array:symbolicatedCallstack addObject:[NSString stringWithFormat:@"%@%@", methodName, [self getOffset:addressString secondString:methodAddress]]];
     } else {
       nonSDKMethodCount++;
     }
   }
-  nonSDKMethodCount == 0 ?: [symbolicatedCallstack addObject:[NSString stringWithFormat:@"(%ld DEV METHODS)", (long)nonSDKMethodCount]];
+  nonSDKMethodCount == 0 ?: [FBSDKTypeUtility array:symbolicatedCallstack addObject:[NSString stringWithFormat:@"(%ld DEV METHODS)", (long)nonSDKMethodCount]];
 
   return containsFBSDKFunction ? symbolicatedCallstack : nil;
 }
@@ -191,8 +201,8 @@ static NSMutableDictionary<NSString *, NSString *> *_methodMapping;
   if (0 == sortedAllAddress.count) {
     return nil;
   }
-  NSString *lowestAddress = sortedAllAddress[0];
-  NSString *highestAddress = sortedAllAddress[sortedAllAddress.count - 1];
+  NSString *lowestAddress = [FBSDKTypeUtility array:sortedAllAddress objectAtIndex:0];
+  NSString *highestAddress = [FBSDKTypeUtility array:sortedAllAddress objectAtIndex:sortedAllAddress.count - 1];
 
   if ([address compare:lowestAddress] == NSOrderedAscending || [address compare:highestAddress] == NSOrderedDescending) {
     return nil;
@@ -212,7 +222,7 @@ static NSMutableDictionary<NSString *, NSString *> *_methodMapping;
                                      usingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
                                        return [obj1 compare:obj2];
                                      }];
-  return sortedAllAddress[index - 1];
+  return [FBSDKTypeUtility array:sortedAllAddress objectAtIndex:index - 1];
 }
 
 @end

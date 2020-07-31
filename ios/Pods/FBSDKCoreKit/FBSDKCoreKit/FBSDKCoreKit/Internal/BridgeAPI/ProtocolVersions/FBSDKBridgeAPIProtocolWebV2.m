@@ -16,6 +16,10 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#import "TargetConditionals.h"
+
+#if !TARGET_OS_TV
+
 #import "FBSDKBridgeAPIProtocolWebV2.h"
 
 #import "FBSDKBridgeAPIProtocolNativeV1.h"
@@ -97,12 +101,12 @@
   }
 
   NSMutableDictionary<NSString *, id> *queryParameters = [[FBSDKBasicUtility dictionaryWithQueryString:requestURL.query] mutableCopy];
-  queryParameters[@"ios_bundle_id"] = [NSBundle mainBundle].bundleIdentifier;
+  [FBSDKTypeUtility dictionary:queryParameters setObject:[NSBundle mainBundle].bundleIdentifier forKey:@"ios_bundle_id"];
   NSURL *redirectURL = [self _redirectURLWithActionID:nil methodName:methodName error:errorRef];
   if (!redirectURL) {
     return nil;
   }
-  queryParameters[@"redirect_url"] = redirectURL;
+  [FBSDKTypeUtility dictionary:queryParameters setObject:redirectURL forKey:@"redirect_url"];
 
   requestURL = [self _requestURLForDialogConfiguration:dialogConfiguration error:errorRef];
   if (!requestURL) {
@@ -127,3 +131,5 @@
 }
 
 @end
+
+#endif

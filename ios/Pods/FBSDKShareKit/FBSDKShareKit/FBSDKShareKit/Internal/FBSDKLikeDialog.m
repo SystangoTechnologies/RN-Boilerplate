@@ -16,9 +16,13 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#import "TargetConditionals.h"
+
+#if !TARGET_OS_TV
+
 #import "FBSDKLikeDialog.h"
 
-#ifdef COCOAPODS
+#ifdef FBSDKCOCOAPODS
 #import <FBSDKCoreKit/FBSDKCoreKit+Internal.h>
 #else
 #import "FBSDKCoreKit+Internal.h"
@@ -77,8 +81,8 @@
   }
 
   NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
-  [FBSDKBasicUtility dictionary:parameters setObject:self.objectID forKey:@"object_id"];
-  [FBSDKBasicUtility dictionary:parameters
+  [FBSDKTypeUtility dictionary:parameters setObject:self.objectID forKey:@"object_id"];
+  [FBSDKTypeUtility dictionary:parameters
                       setObject:NSStringFromFBSDKLikeObjectType(self.objectType)
                          forKey:@"object_type"];
   FBSDKBridgeAPIRequest * webRequest = [FBSDKBridgeAPIRequest bridgeAPIRequestWithProtocolType:FBSDKBridgeAPIProtocolTypeWeb
@@ -163,3 +167,5 @@
 }
 
 @end
+
+#endif

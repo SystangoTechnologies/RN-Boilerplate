@@ -20,7 +20,7 @@
 
 #import <Photos/Photos.h>
 
-#ifdef COCOAPODS
+#ifdef FBSDKCOCOAPODS
 #import <FBSDKCoreKit/FBSDKCoreKit+Internal.h>
 #else
 #import "FBSDKCoreKit+Internal.h"
@@ -101,7 +101,7 @@
        options:imageRequestOptions
        resultHandler:^(UIImage *image, NSDictionary<NSString *, id> *info) {
          if (image) {
-           [images addObject:image];
+           [FBSDKTypeUtility array:images addObject:image];
          }
        }];
     } else if (photo.imageURL) {
@@ -109,16 +109,16 @@
         // load the contents of the file and bridge the image
         UIImage *image = [UIImage imageWithContentsOfFile:photo.imageURL.path];
         if (image) {
-          [images addObject:image];
+          [FBSDKTypeUtility array:images addObject:image];
         }
       }
     } else if (photo.image) {
       // bridge the image
-      [images addObject:photo.image];
+      [FBSDKTypeUtility array:images addObject:photo.image];
     }
   }
   if (images.count > 0) {
-    [FBSDKBasicUtility dictionary:updatedParameters
+    [FBSDKTypeUtility dictionary:updatedParameters
                         setObject:images
                            forKey:@"photos"];
   }

@@ -6,8 +6,6 @@
  */
 
 #import "AppDelegate.h"
-#import "RNFirebaseNotifications.h"
-#import "RNFirebaseMessaging.h"
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
@@ -16,7 +14,6 @@
 #else
 #import "RNSentry.h" // This is used for versions of react < 0.40
 #endif
-#import <RNGoogleSignin/RNGoogleSignin.h>
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <Firebase.h>
 
@@ -24,7 +21,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  NSURL *jsCodeLocation;
   for (NSString* family in [UIFont familyNames])
   {
     NSLog(@"%@", family);
@@ -35,7 +31,6 @@
   }
   
   [FIRApp configure];
-  [RNFirebaseNotifications configure];
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
 RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"SysBoilerplateRN"
@@ -71,19 +66,16 @@ RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
   BOOL Facebookhandled = [[FBSDKApplicationDelegate sharedInstance] application:application openURL:url sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey] annotation:options[UIApplicationOpenURLOptionsAnnotationKey]
   ];
   
-  BOOL Googlehandled =  [RNGoogleSignin application:application openURL:url sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey] annotation:options[UIApplicationOpenURLOptionsAnnotationKey]];
-  
-  return Facebookhandled || Googlehandled;
+  return Facebookhandled;
 }
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
-  [[RNFirebaseNotifications instance] didReceiveLocalNotification:notification];
 }
+
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo
                                                        fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHandler{
-  [[RNFirebaseNotifications instance] didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
 }
 
 - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
-  [[RNFirebaseMessaging instance] didRegisterUserNotificationSettings:notificationSettings];
 }
+  
 @end

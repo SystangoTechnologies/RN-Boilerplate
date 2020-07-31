@@ -1,1 +1,1 @@
-../../../FirebaseMessaging/Firebase/Messaging/FIRMessagingPubSubRegistrar.h
+../../../FirebaseMessaging/FirebaseMessaging/Sources/FIRMessagingPubSubRegistrar.h

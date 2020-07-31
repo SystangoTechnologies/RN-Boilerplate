@@ -16,11 +16,19 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#import "TargetConditionals.h"
+
+#if !TARGET_OS_TV
+
 #import "FBSDKURL_Internal.h"
 
 #import "FBSDKAppLinkTarget.h"
 #import "FBSDKAppLink_Internal.h"
+#import "FBSDKCoreKit+Internal.h"
 #import "FBSDKMeasurementEvent_Internal.h"
+#import "FBSDKSettings.h"
+
+NSString *const AutoAppLinkFlagKey = @"is_auto_applink";
 
 @implementation FBSDKURL
 
@@ -42,7 +50,7 @@
         // Try to parse the JSON
         NSError *error = nil;
         NSDictionary<NSString *, id> *applinkData =
-         [NSJSONSerialization JSONObjectWithData:[appLinkDataString dataUsingEncoding:NSUTF8StringEncoding]
+         [FBSDKTypeUtility JSONObjectWithData:[appLinkDataString dataUsingEncoding:NSUTF8StringEncoding]
                                          options:0
                                            error:&error];
         if (!error && [applinkData isKindOfClass:[NSDictionary class]]) {
@@ -78,27 +86,27 @@
                 NSString *const EVENT_YES_VAL = @"1";
                 NSString *const EVENT_NO_VAL = @"0";
                 NSMutableDictionary<NSString *, id> *logData = [[NSMutableDictionary alloc] init];
-                logData[@"version"] = version;
+                [FBSDKTypeUtility dictionary:logData setObject:version forKey:@"version"];
                 if (refererURLString) {
-                    logData[@"refererURL"] = refererURLString;
+                    [FBSDKTypeUtility dictionary:logData setObject:refererURLString forKey:@"refererURL"];
                 }
                 if (refererAppName) {
-                    logData[@"refererAppName"] = refererAppName;
+                    [FBSDKTypeUtility dictionary:logData setObject:refererAppName forKey:@"refererAppName"];
                 }
                 if (sourceApplication) {
-                    logData[@"sourceApplication"] = sourceApplication;
+                    [FBSDKTypeUtility dictionary:logData setObject:sourceApplication forKey:@"sourceApplication"];
                 }
                 if (_targetURL.absoluteString) {
-                    logData[@"targetURL"] = _targetURL.absoluteString;
+                    [FBSDKTypeUtility dictionary:logData setObject:_targetURL.absoluteString forKey:@"targetURL"];
                 }
                 if (_inputURL.absoluteString) {
-                    logData[@"inputURL"] = _inputURL.absoluteString;
+                    [FBSDKTypeUtility dictionary:logData setObject:_inputURL.absoluteString forKey:@"inputURL"];
                 }
                 if (_inputURL.scheme) {
-                    logData[@"inputURLScheme"] = _inputURL.scheme;
+                    [FBSDKTypeUtility dictionary:logData setObject:_inputURL.scheme forKey:@"inputURLScheme"];
                 }
-                logData[@"forRenderBackToReferrerBar"] = forRenderBackToReferrerBar ? EVENT_YES_VAL : EVENT_NO_VAL;
-                logData[@"forOpenUrl"] = forOpenURLEvent ? EVENT_YES_VAL : EVENT_NO_VAL;
+                [FBSDKTypeUtility dictionary:logData setObject:forRenderBackToReferrerBar ? EVENT_YES_VAL : EVENT_NO_VAL forKey:@"forRenderBackToReferrerBar"];
+                [FBSDKTypeUtility dictionary:logData setObject:forOpenURLEvent ? EVENT_YES_VAL : EVENT_NO_VAL forKey:@"forOpenUrl"];
                 [FBSDKMeasurementEvent postNotificationForEventName:FBSDKAppLinkParseEventName args:logData];
                 if (forOpenURLEvent) {
                     [FBSDKMeasurementEvent postNotificationForEventName:FBSDKAppLinkNavigateInEventName args:logData];
@@ -108,6 +116,15 @@
     }
 
     return self;
+}
+
+- (BOOL)isAutoAppLink {
+  NSString *host = self.targetURL.host;
+  NSString *scheme = self.targetURL.scheme;
+  NSString *expectedHost = @"applinks";
+  NSString *expectedScheme = [NSString stringWithFormat:@"fb%@", FBSDKSettings.appID];
+  BOOL autoFlag = [self.appLinkData[AutoAppLinkFlagKey] boolValue];
+  return autoFlag && [expectedHost isEqual:host] && [expectedScheme isEqual:scheme];
 }
 
 + (instancetype)URLWithURL:(NSURL *)url {
@@ -122,12 +139,6 @@
     return [[FBSDKURL alloc] initWithURL:url forOpenInboundURL:NO sourceApplication:nil forRenderBackToReferrerBar:YES];
 }
 
-+ (NSString *)decodeURLString:(NSString *)string {
-    return (NSString *)CFBridgingRelease(CFURLCreateStringByReplacingPercentEscapes(NULL,
-                                                                                    (CFStringRef)string,
-                                                                                    CFSTR("")));
-}
-
 + (NSDictionary<NSString *, id> *)queryParametersForURL:(NSURL *)url {
     NSMutableDictionary<NSString *, id> *parameters = [NSMutableDictionary dictionary];
     NSString *query = url.query;
@@ -139,14 +150,16 @@
         NSRange equalsLocation = [component rangeOfString:@"="];
         if (equalsLocation.location == NSNotFound) {
             // There's no equals, so associate the key with NSNull
-            parameters[[self decodeURLString:component]] = [NSNull null];
+            [FBSDKTypeUtility dictionary:parameters setObject:[NSNull null] forKey:[FBSDKBasicUtility URLDecode:component]];
         } else {
-            NSString *key = [self decodeURLString:[component substringToIndex:equalsLocation.location]];
-            NSString *value = [self decodeURLString:[component substringFromIndex:equalsLocation.location + 1]];
-            parameters[key] = value;
+            NSString *key = [FBSDKBasicUtility URLDecode:[component substringToIndex:equalsLocation.location]];
+            NSString *value = [FBSDKBasicUtility URLDecode:[component substringFromIndex:equalsLocation.location + 1]];
+            [FBSDKTypeUtility dictionary:parameters setObject:value forKey:key];
         }
     }
     return [NSDictionary dictionaryWithDictionary:parameters];
 }
 
 @end
+
+#endif

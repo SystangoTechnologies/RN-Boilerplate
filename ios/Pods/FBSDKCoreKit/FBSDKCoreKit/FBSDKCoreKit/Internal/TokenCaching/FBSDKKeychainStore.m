@@ -21,6 +21,7 @@
 #import "FBSDKDynamicFrameworkLoader.h"
 #import "FBSDKLogger.h"
 #import "FBSDKSettings.h"
+#import "FBSDKTypeUtility.h"
 
 @implementation FBSDKKeychainStore
 
@@ -35,6 +36,8 @@
   return self;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (BOOL)setDictionary:(NSDictionary *)value forKey:(NSString *)key accessibility:(CFTypeRef)accessibility
 {
   NSData *data = value == nil ? nil : [NSKeyedArchiver archivedDataWithRootObject:value];
@@ -55,6 +58,7 @@
 
   return dict;
 }
+#pragma clang diagnostic pop
 
 - (BOOL)setString:(NSString *)value forKey:(NSString *)key accessibility:(CFTypeRef)accessibility
 {
@@ -151,9 +155,9 @@
 - (NSMutableDictionary *)queryForKey:(NSString *)key
 {
   NSMutableDictionary *query = [NSMutableDictionary dictionary];
-  [query setObject:[FBSDKDynamicFrameworkLoader loadkSecClassGenericPassword] forKey:[FBSDKDynamicFrameworkLoader loadkSecClass]];
-  [query setObject:_service forKey:[FBSDKDynamicFrameworkLoader loadkSecAttrService]];
-  [query setObject:key forKey:[FBSDKDynamicFrameworkLoader loadkSecAttrAccount]];
+  [FBSDKTypeUtility dictionary:query setObject:[FBSDKDynamicFrameworkLoader loadkSecClassGenericPassword] forKey:[FBSDKDynamicFrameworkLoader loadkSecClass]];
+  [FBSDKTypeUtility dictionary:query setObject:_service forKey:[FBSDKDynamicFrameworkLoader loadkSecAttrService]];
+  [FBSDKTypeUtility dictionary:query setObject:key forKey:[FBSDKDynamicFrameworkLoader loadkSecAttrAccount]];
 #if !TARGET_IPHONE_SIMULATOR
   if (_accessGroup) {
     [query setObject:_accessGroup forKey:[FBSDKDynamicFrameworkLoader loadkSecAttrAccessGroup]];

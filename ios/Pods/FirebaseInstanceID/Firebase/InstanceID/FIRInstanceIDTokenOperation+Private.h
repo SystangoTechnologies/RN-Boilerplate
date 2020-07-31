@@ -18,9 +18,6 @@
 
 #import "FIRInstanceIDUtilities.h"
 
-@class FIRInstanceIDKeyPair;
-@class FIRInstanceIDURLQueryItem;
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FIRInstanceIDTokenOperation (Private)
@@ -40,13 +37,12 @@ NS_ASSUME_NONNULL_BEGIN
                          scope:(NSString *)scope
                        options:(nullable NSDictionary<NSString *, NSString *> *)options
             checkinPreferences:(FIRInstanceIDCheckinPreferences *)checkinPreferences
-                       keyPair:(FIRInstanceIDKeyPair *)keyPair;
+                    instanceID:(NSString *)instanceID;
 
 #pragma mark - Request Construction
-+ (NSMutableURLRequest *)requestWithAuthHeader:(NSString *)authHeaderString;
-+ (NSMutableArray<FIRInstanceIDURLQueryItem *> *)standardQueryItemsWithDeviceID:(NSString *)deviceID
-                                                                          scope:(NSString *)scope;
-- (NSArray<FIRInstanceIDURLQueryItem *> *)queryItemsWithKeyPair:(FIRInstanceIDKeyPair *)keyPair;
++ (NSMutableArray<NSURLQueryItem *> *)standardQueryItemsWithDeviceID:(NSString *)deviceID
+                                                               scope:(NSString *)scope;
+- (NSMutableURLRequest *)tokenRequest;
 
 #pragma mark - HTTP Headers
 /**
@@ -61,6 +57,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)finishWithResult:(FIRInstanceIDTokenOperationResult)result
                    token:(nullable NSString *)token
                    error:(nullable NSError *)error;
+
+#pragma mark - Methods to override
+- (void)performTokenOperation;
 
 @end
 

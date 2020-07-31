@@ -16,17 +16,15 @@
 
 #import "FIRInstanceIDTokenOperation.h"
 
+#import "FirebaseInstallations/Source/Library/Private/FirebaseInstallationsInternal.h"
+
 #import "FIRInstanceIDCheckinPreferences.h"
-#import "FIRInstanceIDKeyPair.h"
-#import "FIRInstanceIDKeyPairUtilities.h"
 #import "FIRInstanceIDLogger.h"
-#import "FIRInstanceIDURLQueryItem.h"
 #import "FIRInstanceIDUtilities.h"
 #import "NSError+FIRInstanceID.h"
 
 static const NSInteger kFIRInstanceIDPlatformVersionIOS = 2;
 
-static NSString *const kFIRInstanceIDParamInstanceID = @"appid";
 // Scope parameter that defines the service using the token
 static NSString *const kFIRInstanceIDParamScope = @"X-scope";
 // Defines the SDK version
@@ -38,11 +36,13 @@ static NSString *const kFIRInstanceIDParamFCMLibVersion = @"X-cliv";
 }
 
 @property(nonatomic, readwrite, strong) FIRInstanceIDCheckinPreferences *checkinPreferences;
-@property(nonatomic, readwrite, strong) FIRInstanceIDKeyPair *keyPair;
+@property(nonatomic, readwrite, strong) NSString *instanceID;
 
 @property(atomic, strong) NSURLSessionDataTask *dataTask;
 @property(readonly, strong)
     NSMutableArray<FIRInstanceIDTokenOperationCompletion> *completionHandlers;
+
+@property(atomic, strong, nullable) NSString *FISAuthToken;
 
 // For testing only
 @property(nonatomic, readwrite, copy) FIRInstanceIDURLRequestTestBlock testBlock;
@@ -68,7 +68,7 @@ static NSString *const kFIRInstanceIDParamFCMLibVersion = @"X-cliv";
                          scope:(NSString *)scope
                        options:(NSDictionary<NSString *, NSString *> *)options
             checkinPreferences:(FIRInstanceIDCheckinPreferences *)checkinPreferences
-                       keyPair:(FIRInstanceIDKeyPair *)keyPair {
+                    instanceID:(NSString *)instanceID {
   self = [super init];
   if (self) {
     _action = action;
@@ -76,7 +76,7 @@ static NSString *const kFIRInstanceIDParamFCMLibVersion = @"X-cliv";
     _scope = [scope copy];
     _options = [options copy];
     _checkinPreferences = checkinPreferences;
-    _keyPair = keyPair;
+    _instanceID = instanceID;
     _completionHandlers = [NSMutableArray array];
 
     _isExecuting = NO;
@@ -91,7 +91,7 @@ static NSString *const kFIRInstanceIDParamFCMLibVersion = @"X-cliv";
   _scope = nil;
   _options = nil;
   _checkinPreferences = nil;
-  _keyPair = nil;
+  _instanceID = nil;
   [_completionHandlers removeAllObjects];
   _completionHandlers = nil;
 }
@@ -142,7 +142,16 @@ static NSString *const kFIRInstanceIDParamFCMLibVersion = @"X-cliv";
 
   [self setExecuting:YES];
 
-  [self performTokenOperation];
+  [[FIRInstallations installations]
+      authTokenWithCompletion:^(FIRInstallationsAuthTokenResult *_Nullable tokenResult,
+                                NSError *_Nullable error) {
+        if (tokenResult.authToken.length > 0) {
+          self.FISAuthToken = tokenResult.authToken;
+          [self performTokenOperation];
+        } else {
+          [self finishWithResult:FIRInstanceIDTokenOperationError token:nil error:error];
+        }
+      }];
 }
 
 - (void)finishWithResult:(FIRInstanceIDTokenOperationResult)result
@@ -172,63 +181,62 @@ static NSString *const kFIRInstanceIDParamFCMLibVersion = @"X-cliv";
 - (void)performTokenOperation {
 }
 
+- (NSMutableURLRequest *)tokenRequest {
+  NSString *authHeader =
+      [FIRInstanceIDTokenOperation HTTPAuthHeaderFromCheckin:self.checkinPreferences];
+  return [[self class] requestWithAuthHeader:authHeader FISAuthToken:self.FISAuthToken];
+}
+
 #pragma mark - Request Construction
-+ (NSMutableURLRequest *)requestWithAuthHeader:(NSString *)authHeaderString {
++ (NSMutableURLRequest *)requestWithAuthHeader:(NSString *)authHeaderString
+                                  FISAuthToken:(NSString *)FISAuthToken {
   NSURL *url = [NSURL URLWithString:FIRInstanceIDRegisterServer()];
   NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
 
   // Add HTTP headers
   [request setValue:authHeaderString forHTTPHeaderField:@"Authorization"];
   [request setValue:FIRInstanceIDAppIdentifier() forHTTPHeaderField:@"app"];
+  if (FISAuthToken) {
+    [request setValue:FISAuthToken forHTTPHeaderField:@"x-goog-firebase-installations-auth"];
+  }
   request.HTTPMethod = @"POST";
   return request;
 }
 
-+ (NSMutableArray<FIRInstanceIDURLQueryItem *> *)standardQueryItemsWithDeviceID:(NSString *)deviceID
-                                                                          scope:(NSString *)scope {
-  NSMutableArray<FIRInstanceIDURLQueryItem *> *queryItems = [NSMutableArray arrayWithCapacity:8];
++ (NSMutableArray<NSURLQueryItem *> *)standardQueryItemsWithDeviceID:(NSString *)deviceID
+                                                               scope:(NSString *)scope {
+  NSMutableArray<NSURLQueryItem *> *queryItems = [NSMutableArray arrayWithCapacity:8];
 
   // E.g. X-osv=10.2.1
   NSString *systemVersion = FIRInstanceIDOperatingSystemVersion();
-  [queryItems addObject:[FIRInstanceIDURLQueryItem queryItemWithName:@"X-osv" value:systemVersion]];
+  [queryItems addObject:[NSURLQueryItem queryItemWithName:@"X-osv" value:systemVersion]];
   // E.g. device=
   if (deviceID) {
-    [queryItems addObject:[FIRInstanceIDURLQueryItem queryItemWithName:@"device" value:deviceID]];
+    [queryItems addObject:[NSURLQueryItem queryItemWithName:@"device" value:deviceID]];
   }
   // E.g. X-scope=fcm
   if (scope) {
-    [queryItems addObject:[FIRInstanceIDURLQueryItem queryItemWithName:kFIRInstanceIDParamScope
-                                                                 value:scope]];
+    [queryItems addObject:[NSURLQueryItem queryItemWithName:kFIRInstanceIDParamScope value:scope]];
   }
   // E.g. plat=2
   NSString *platform = [NSString stringWithFormat:@"%ld", (long)kFIRInstanceIDPlatformVersionIOS];
-  [queryItems addObject:[FIRInstanceIDURLQueryItem queryItemWithName:@"plat" value:platform]];
+  [queryItems addObject:[NSURLQueryItem queryItemWithName:@"plat" value:platform]];
   // E.g. app=com.myapp.foo
   NSString *appIdentifier = FIRInstanceIDAppIdentifier();
-  [queryItems addObject:[FIRInstanceIDURLQueryItem queryItemWithName:@"app" value:appIdentifier]];
+  [queryItems addObject:[NSURLQueryItem queryItemWithName:@"app" value:appIdentifier]];
   // E.g. app_ver=1.5
   NSString *appVersion = FIRInstanceIDCurrentAppVersion();
-  [queryItems addObject:[FIRInstanceIDURLQueryItem queryItemWithName:@"app_ver" value:appVersion]];
+  [queryItems addObject:[NSURLQueryItem queryItemWithName:@"app_ver" value:appVersion]];
   // E.g. X-cliv=fiid-1.2.3
   NSString *fcmLibraryVersion =
       [NSString stringWithFormat:@"fiid-%@", FIRInstanceIDCurrentGCMVersion()];
   if (fcmLibraryVersion.length) {
-    FIRInstanceIDURLQueryItem *gcmLibVersion =
-        [FIRInstanceIDURLQueryItem queryItemWithName:kFIRInstanceIDParamFCMLibVersion
-                                               value:fcmLibraryVersion];
+    NSURLQueryItem *gcmLibVersion =
+        [NSURLQueryItem queryItemWithName:kFIRInstanceIDParamFCMLibVersion value:fcmLibraryVersion];
     [queryItems addObject:gcmLibVersion];
   }
 
   return queryItems;
-}
-
-- (NSArray<FIRInstanceIDURLQueryItem *> *)queryItemsWithKeyPair:(FIRInstanceIDKeyPair *)keyPair {
-  NSMutableArray<FIRInstanceIDURLQueryItem *> *items = [NSMutableArray arrayWithCapacity:3];
-  // appid=
-  NSString *instanceID = FIRInstanceIDAppIdentity(keyPair);
-  [items addObject:[FIRInstanceIDURLQueryItem queryItemWithName:kFIRInstanceIDParamInstanceID
-                                                          value:instanceID]];
-  return items;
 }
 
 #pragma mark - HTTP Header
