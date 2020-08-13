@@ -44,6 +44,15 @@ For iOS:
 react-native run-ios
 ```
 
+## Commit & push ``
+
+husky added in the package, To push the code on the repo you need execute the following command.
+
+```
+yarn validate
+eslint --fix .
+```
+
 ## Dependencies Used
 
 * react-native-fbsdk                                - ^2.0.0
