@@ -1,6 +1,6 @@
-import { applyMiddleware, compose, createStore } from 'redux';
+import {applyMiddleware, compose, createStore} from 'redux';
 import createSagaMiddleware from 'redux-saga';
-import { persistReducer, persistStore } from 'redux-persist';
+import {persistReducer, persistStore} from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 const persistConfig = {
@@ -11,7 +11,7 @@ const persistConfig = {
    */
   blacklist: [
     // 'auth',
-  ]
+  ],
 };
 
 export default (rootReducer, rootSaga) => {
@@ -33,5 +33,5 @@ export default (rootReducer, rootSaga) => {
   // Kick off the root saga
   sagaMiddleware.run(rootSaga);
 
-  return { store, persistor };
+  return {store, persistor};
 };

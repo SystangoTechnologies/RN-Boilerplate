@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import { View, SafeAreaView, Alert } from 'react-native';
-import { connect } from 'react-redux';
-import messaging, { firebase } from '@react-native-firebase/messaging';
+import React, {Component} from 'react';
+import {View, SafeAreaView, Alert} from 'react-native';
+import {connect} from 'react-redux';
+import messaging, {firebase} from '@react-native-firebase/messaging';
 
 import NavigationService from '../../Services/NavigationService';
 import AppNavigator from '../../Navigators/AppNavigator';
@@ -20,31 +20,31 @@ class RootScreen extends Component {
   _registerMessageHandlers() {
     // Assume a message-notification contains a "type" property in the data payload of the screen to open
     this.noificationOpened = messaging().onNotificationOpenedApp(
-      (remoteMessage) => {
+      remoteMessage => {
         console.warn(
           '*** Notification caused app to open from background state:',
-          remoteMessage.notification
+          remoteMessage.notification,
         );
-      }
+      },
     );
 
     // Invokes when the app is in foreground.
-    this.messageListener = messaging().onMessage((remoteMessage) => {
+    this.messageListener = messaging().onMessage(remoteMessage => {
       console.warn('*** Notification on message', remoteMessage);
     });
 
-    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
       console.warn('*** Message handled in the background!', remoteMessage);
     });
 
     // Check whether an initial notification is available
     this.getInitialNotification = messaging()
       .getInitialNotification()
-      .then((remoteMessage) => {
+      .then(remoteMessage => {
         if (remoteMessage) {
           console.warn(
             '*** Notification caused app to open from quit state:',
-            remoteMessage.notification
+            remoteMessage.notification,
           );
         }
       });
@@ -53,13 +53,13 @@ class RootScreen extends Component {
   getFCMToken = async () => {
     await messaging()
       .getToken()
-      .then((fcmToken) => {
+      .then(fcmToken => {
         if (fcmToken) {
           console.log('$$$$$ DEVICE TOKEN:', fcmToken);
           AsyncStorageUtil.setAsyncStorage('DEVICE_TOKEN', fcmToken);
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.error('$$$$$ DEVICE TOKEN ERROR:', error);
       });
   };
@@ -105,7 +105,7 @@ class RootScreen extends Component {
         <View style={styles.container}>
           <AppNavigator
             // Initialize the NavigationService (see https://reactnavigation.org/docs/en/navigating-without-navigation-prop.html)
-            ref={(navigatorRef) => {
+            ref={navigatorRef => {
               NavigationService.setTopLevelNavigator(navigatorRef);
             }}
           />
@@ -117,11 +117,11 @@ class RootScreen extends Component {
 
 const mapStateToProps = () => ({});
 
-const mapDispatchToProps = (dispatch) => ({
-  startUp: () => dispatch(startUp())
+const mapDispatchToProps = dispatch => ({
+  startUp: () => dispatch(startUp()),
 });
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(RootScreen);

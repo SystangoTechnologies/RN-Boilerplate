@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux';
+import {combineReducers} from 'redux';
 import configureStore from '../Stores/CreateStore';
 import rootSaga from '../Sagas';
 import UserLoginReducer from './UserLoginReducer';
@@ -11,7 +11,7 @@ export default () => {
     UserLoginReducer,
     StartUpReducer,
     LanguageReducer,
-    BrandReducer
+    BrandReducer,
   });
 
   return configureStore(rootReducer, rootSaga);

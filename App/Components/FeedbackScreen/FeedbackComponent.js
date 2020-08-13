@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { View, Text, TouchableOpacity, TextInput } from 'react-native';
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {View, Text, TouchableOpacity, TextInput} from 'react-native';
 import * as reactNativeRatings from 'react-native-ratings';
 import I18n from '../../i18n/index';
 import styles from './styles';
@@ -9,7 +9,7 @@ class FeedbackComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      feedbackText: ''
+      feedbackText: '',
     };
   }
 
@@ -28,7 +28,7 @@ class FeedbackComponent extends Component {
               numberOfLines={2}
               rowSpan={2}
               blurOnSubmit
-              onChangeText={(text) => this.setState({ feedbackText: text })}
+              onChangeText={text => this.setState({feedbackText: text})}
               onEndEditing={() => {}}
               onSubmitEditing={() => {}}
               style={styles.textInputContainer}
@@ -69,5 +69,5 @@ const mapDispatchToProps = () => {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(FeedbackComponent);

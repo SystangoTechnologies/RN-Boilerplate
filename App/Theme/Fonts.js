@@ -5,28 +5,28 @@ const size = {
   input: 18,
   regular: 17,
   medium: 14,
-  small: 12
+  small: 12,
 };
 
 const style = {
   h1: {
-    fontSize: size.h1
+    fontSize: size.h1,
   },
   h2: {
-    fontSize: size.h2
+    fontSize: size.h2,
   },
   h3: {
-    fontSize: size.h3
+    fontSize: size.h3,
   },
   normal: {
-    fontSize: size.regular
+    fontSize: size.regular,
   },
   small: {
-    fontSize: size.small
-  }
+    fontSize: size.small,
+  },
 };
 
 export default {
   size,
-  style
+  style,
 };

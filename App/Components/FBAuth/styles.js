@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
 import scale from '../../Utils/scale';
 
 export default StyleSheet.create({
@@ -6,6 +6,6 @@ export default StyleSheet.create({
     height: scale(40),
     alignSelf: 'stretch',
     marginHorizontal: scale(54),
-    marginVertical: scale(10)
-  }
+    marginVertical: scale(10),
+  },
 });

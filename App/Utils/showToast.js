@@ -5,6 +5,6 @@ export default function showToast(msg) {
     position: 0,
     duration: Toast.durations.SHORT,
     animation: true,
-    hideOnPress: true
+    hideOnPress: true,
   });
 }

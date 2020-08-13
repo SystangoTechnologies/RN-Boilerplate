@@ -4,5 +4,5 @@ export default {
   primary: '#ed9121',
   success: '#28a745',
   error: '#dc3545',
-  white: '#FFFFFF'
+  white: '#FFFFFF',
 };

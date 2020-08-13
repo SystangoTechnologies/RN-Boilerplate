@@ -1,21 +1,21 @@
-import React, { useState, useCallback } from 'react';
+import React, {useState, useCallback} from 'react';
 import {
   ScrollView,
   TextInput,
   TouchableOpacity,
   Text,
-  View
+  View,
 } from 'react-native';
 
 import analytics from '@react-native-firebase/analytics';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import Validators from '../../Utils/Validators';
 import showToast from '../../Utils/showToast';
 import styles from './styles';
 import I18n from '../../i18n/index';
 
-export default function SignupScreenComponent({ props }) {
+export default function SignupScreenComponent({props}) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -38,40 +38,37 @@ export default function SignupScreenComponent({ props }) {
     } else if (!Validators.isValidPassword(password)) {
       showToast('Password is invalid');
     } else {
-      const user = { user: { name, email, password } };
+      const user = {user: {name, email, password}};
       analytics().logEvent('login_method', {
         type: 'email',
         email,
-        platform: Validators.platform()
+        platform: Validators.platform(),
       });
       props.userSignup(user);
     }
-  }, [email, password, props]);
+  }, [email, name, password, props]);
 
-  const formatDate = useCallback(
-    (date) => {
-      togglePicker(false);
-      if (date === '') {
-        return '';
-      } else {
-        const d = new Date(date);
-        const month = `${d.getMonth() + 1}`;
-        const day = `${d.getDate()}`;
-        const year = d.getFullYear();
-        const _date = [month, day, year].join('-');
-        setDOB(_date);
-        return _date;
-      }
-    },
-    [email, password, props]
-  );
+  const formatDate = date => {
+    togglePicker(false);
+    if (date === '') {
+      return '';
+    } else {
+      const d = new Date(date);
+      const month = `${d.getMonth() + 1}`;
+      const day = `${d.getDate()}`;
+      const year = d.getFullYear();
+      const _date = [month, day, year].join('-');
+      setDOB(_date);
+      return _date;
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.signInContainers}>
         <Text style={styles.title}>{I18n.t('signup_title')}</Text>
-        <View style={{ flexDirection: 'row', marginBottom: 10 }}>
-          <View style={{ flex: 1 }}>
+        <View style={{flexDirection: 'row', marginBottom: 10}}>
+          <View style={{flex: 1}}>
             <TextInput
               underlineColorAndroid="transparent"
               returnKeyType="next"
@@ -79,7 +76,7 @@ export default function SignupScreenComponent({ props }) {
               placeholderTextColor="gray"
               value={name}
               autoCapitalize="none"
-              onChangeText={(text) => setName(text)}
+              onChangeText={text => setName(text)}
               keyboardType="default"
               style={styles.emailInput}
             />
@@ -90,15 +87,14 @@ export default function SignupScreenComponent({ props }) {
                 onPress={() => {
                   setName('');
                 }}
-                style={[styles.crossIcon]}
-              >
-                <Text style={{ fontSize: 26 }}>x</Text>
+                style={[styles.crossIcon]}>
+                <Text style={{fontSize: 26}}>x</Text>
               </TouchableOpacity>
             </View>
           )}
         </View>
-        <View style={{ flexDirection: 'row', marginBottom: 10 }}>
-          <View style={{ flex: 1 }}>
+        <View style={{flexDirection: 'row', marginBottom: 10}}>
+          <View style={{flex: 1}}>
             <TextInput
               underlineColorAndroid="transparent"
               returnKeyType="next"
@@ -106,7 +102,7 @@ export default function SignupScreenComponent({ props }) {
               placeholderTextColor="gray"
               value={email}
               autoCapitalize="none"
-              onChangeText={(text) => setEmail(text)}
+              onChangeText={text => setEmail(text)}
               keyboardType="email-address"
               style={styles.emailInput}
             />
@@ -117,15 +113,14 @@ export default function SignupScreenComponent({ props }) {
                 onPress={() => {
                   setEmail('');
                 }}
-                style={[styles.crossIcon]}
-              >
-                <Text style={{ fontSize: 26 }}>x</Text>
+                style={[styles.crossIcon]}>
+                <Text style={{fontSize: 26}}>x</Text>
               </TouchableOpacity>
             </View>
           )}
         </View>
-        <View style={{ flexDirection: 'row' }}>
-          <View style={{ flex: 1 }}>
+        <View style={{flexDirection: 'row'}}>
+          <View style={{flex: 1}}>
             <TextInput
               underlineColorAndroid="transparent"
               returnKeyType="next"
@@ -134,7 +129,7 @@ export default function SignupScreenComponent({ props }) {
               value={password}
               autoCapitalize="none"
               secureTextEntry
-              onChangeText={(text) => setPassword(text)}
+              onChangeText={text => setPassword(text)}
               style={styles.emailInput}
             />
           </View>
@@ -144,9 +139,8 @@ export default function SignupScreenComponent({ props }) {
                 onPress={() => {
                   setPassword('');
                 }}
-                style={[styles.crossIcon]}
-              >
-                <Text style={{ fontSize: 26 }}>x</Text>
+                style={[styles.crossIcon]}>
+                <Text style={{fontSize: 26}}>x</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -163,13 +157,12 @@ export default function SignupScreenComponent({ props }) {
         ) : null}
         <TouchableOpacity
           style={styles.dobContainer}
-          onPress={() => togglePicker(true)}
-        >
-          <Text style={{ color: dob === '' ? 'gray' : 'black' }}>
+          onPress={() => togglePicker(true)}>
+          <Text style={{color: dob === '' ? 'gray' : 'black'}}>
             {dob === '' ? I18n.t('Select_Date') : dob}
           </Text>
         </TouchableOpacity>
-        <View style={{ height: 100, marginTop: 10 }}>
+        <View style={{height: 100, marginTop: 10}}>
           <GooglePlacesAutocomplete
             placeholder={I18n.t('signup_address')}
             minLength={2} // minimum length of text to search
@@ -178,7 +171,7 @@ export default function SignupScreenComponent({ props }) {
             keyboardAppearance="light" // Can be left out for default keyboardAppearance https://facebook.github.io/react-native/docs/textinput.html#keyboardappearance
             listViewDisplayed="auto" // true/false/undefined
             fetchDetails
-            renderDescription={(row) => row.description} // custom description render
+            renderDescription={row => row.description} // custom description render
             onPress={(data, details = null) => {
               // 'details' is provided when fetchDetails = true
               console.log(data, details);
@@ -187,25 +180,25 @@ export default function SignupScreenComponent({ props }) {
             query={{
               key: 'YOUR API KEY',
               language: 'en', // language of the results
-              types: '(cities)' // default: 'geocode'
+              types: '(cities)', // default: 'geocode'
             }}
             styles={{
               textInputContainer: {
                 backgroundColor: 'rgba(0,0,0,0)',
                 borderWidth: 1,
                 borderColor: '#d0d0d0',
-                padding: 0
+                padding: 0,
               },
               textInput: {
                 padding: 0,
-                color: 'gray'
+                color: 'gray',
               },
               description: {
-                fontWeight: 'bold'
+                fontWeight: 'bold',
               },
               predefinedPlacesDescription: {
-                color: '#1faadb'
-              }
+                color: '#1faadb',
+              },
             }}
             // currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
             // currentLocationLabel="Current location"
@@ -213,14 +206,14 @@ export default function SignupScreenComponent({ props }) {
             GoogleReverseGeocodingQuery={{}}
             GooglePlacesSearchQuery={{
               rankby: 'distance',
-              type: 'cafe'
+              type: 'cafe',
             }}
             GooglePlacesDetailsQuery={{
-              fields: 'formatted_address'
+              fields: 'formatted_address',
             }}
             filterReverseGeocodingByTypes={[
               'locality',
-              'administrative_area_level_3'
+              'administrative_area_level_3',
             ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
             // predefinedPlaces={[homePlace, workPlace]}
             debounce={200}
@@ -228,8 +221,7 @@ export default function SignupScreenComponent({ props }) {
         </View>
         <TouchableOpacity
           style={styles.subsContainer}
-          onPress={() => onSubmit()}
-        >
+          onPress={() => onSubmit()}>
           <Text style={styles.subsText}>{I18n.t('submit')}</Text>
         </TouchableOpacity>
       </View>

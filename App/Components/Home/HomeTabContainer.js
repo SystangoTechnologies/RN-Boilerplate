@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import HomeTabComponent from './HomeTabComponent';
 import * as userActions from '../../Actions/userActions';
 import * as brandActions from '../../Actions/brandActions';
 
 class HomeTabContainer extends Component {
   static navigationOptions = {
-    title: 'Home'
+    title: 'Home',
   };
 
   constructor(props) {
@@ -15,13 +15,7 @@ class HomeTabContainer extends Component {
   }
 
   render() {
-    const {
-      message,
-      userData,
-      allBrands,
-      userLogout,
-      getAllBrands
-    } = this.props;
+    const {message, userData, allBrands, userLogout, getAllBrands} = this.props;
     return (
       <HomeTabComponent
         message={message}
@@ -34,22 +28,22 @@ class HomeTabContainer extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   message: state.UserLoginReducer.message,
   userData: state.UserLoginReducer.user,
-  allBrands: state.BrandReducer.allBrands
+  allBrands: state.BrandReducer.allBrands,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   userLogout: () => {
     return dispatch(userActions.userLogout());
   },
   getAllBrands: () => {
     return dispatch(brandActions.getAllBrands());
-  }
+  },
 });
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(HomeTabContainer);

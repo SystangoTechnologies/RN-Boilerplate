@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
   FlatList,
   Image,
   TouchableOpacity,
-  TextInput
+  TextInput,
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import * as CONST from '../../Utils/Constants';
@@ -15,7 +15,7 @@ export default class HomeTabComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchText: ''
+      searchText: '',
     };
     this.dummyData = [
       {
@@ -26,7 +26,7 @@ export default class HomeTabComponent extends Component {
         price: '$23',
         quantity: '1000ml',
         rating: 5,
-        url: ''
+        url: '',
       },
       {
         id: 315,
@@ -36,7 +36,7 @@ export default class HomeTabComponent extends Component {
         price: '$20',
         quantity: '1000ml',
         rating: 4,
-        url: ''
+        url: '',
       },
       {
         id: 316,
@@ -46,7 +46,7 @@ export default class HomeTabComponent extends Component {
         price: '$18',
         quantity: '1000ml',
         rating: 4,
-        url: ''
+        url: '',
       },
       {
         id: 317,
@@ -56,7 +56,7 @@ export default class HomeTabComponent extends Component {
         price: '$16',
         quantity: '1000ml',
         rating: 3,
-        url: ''
+        url: '',
       },
       {
         id: 318,
@@ -66,7 +66,7 @@ export default class HomeTabComponent extends Component {
         price: '$13',
         quantity: '1000ml',
         rating: 3,
-        url: ''
+        url: '',
       },
       {
         id: 319,
@@ -76,14 +76,14 @@ export default class HomeTabComponent extends Component {
         price: '$10',
         quantity: '1000ml',
         rating: 1,
-        url: ''
-      }
+        url: '',
+      },
     ];
   }
 
-  renderCell({ item }) {
+  renderCell({item}) {
     console.log('this.props.allBrands', this.props.allBrands);
-    const { rating } = item;
+    const {rating} = item;
     const overallRating = [1, 2, 3, 4, 5];
     return (
       <TouchableOpacity activeOpacity={0.5} style={styles.cellContainer}>
@@ -99,13 +99,12 @@ export default class HomeTabComponent extends Component {
             style={{
               flexDirection: 'row',
               marginTop: 15,
-              justifyContent: 'space-between'
-            }}
-          >
-            <View style={{ flexDirection: 'row' }}>
-              {overallRating.map((index) => {
+              justifyContent: 'space-between',
+            }}>
+            <View style={{flexDirection: 'row'}}>
+              {overallRating.map(index => {
                 return (
-                  <View style={{ marginRight: 5 }}>
+                  <View style={{marginRight: 5}}>
                     <FontAwesome
                       name="star"
                       color={
@@ -150,8 +149,8 @@ export default class HomeTabComponent extends Component {
             placeholder="Search product"
             value={this.state.searchText}
             autoCapitalize="none"
-            onChangeText={(searchText) => {
-              this.setState({ searchText });
+            onChangeText={searchText => {
+              this.setState({searchText});
             }}
             keyboardType="email-address"
             style={styles.searchInput}
@@ -167,7 +166,7 @@ export default class HomeTabComponent extends Component {
           <FlatList
             keyExtractor={(item, index) => index.toString()}
             data={this.dummyData}
-            renderItem={(item) => this.renderCell(item)}
+            renderItem={item => this.renderCell(item)}
             extraData={this.state}
           />
           <Image style={styles.loadMore} source={CONST.LOAD_MORE_ICON} />

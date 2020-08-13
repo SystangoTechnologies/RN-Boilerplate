@@ -1,4 +1,4 @@
-import { StyleSheet, PixelRatio } from 'react-native';
+import {StyleSheet, PixelRatio} from 'react-native';
 import Fonts from '../../Theme/Fonts';
 import Colors from '../../Theme/Colors';
 import ApplicationStyles from '../../Theme/ApplicationStyles';
@@ -9,17 +9,17 @@ export default StyleSheet.create({
   container: {
     ...ApplicationStyles.screen.container,
     flex: 1,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   title: {
     ...Fonts.style.h2,
     textAlign: 'center',
-    marginBottom: scale(10)
+    marginBottom: scale(10),
   },
   text: {
     ...Fonts.style.normal,
     textAlign: 'center',
-    color: Colors.text
+    color: Colors.text,
   },
   subsContainer: {
     position: 'absolute',
@@ -30,7 +30,7 @@ export default StyleSheet.create({
     // height: scale(40),
     backgroundColor: Colors.primary,
     justifyContent: 'center',
-    borderRadius: scale(20)
+    borderRadius: scale(20),
   },
   editContainer: {
     position: 'absolute',
@@ -41,34 +41,34 @@ export default StyleSheet.create({
     // height: scale(40),
     backgroundColor: Colors.primary,
     justifyContent: 'center',
-    borderRadius: scale(20)
+    borderRadius: scale(20),
   },
   subsText: {
     color: Colors.white,
     fontSize: scale(16),
-    textAlign: 'center'
+    textAlign: 'center',
   },
   nameContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: scale(10)
+    paddingVertical: scale(10),
   },
   avatarContainer: {
     borderColor: CONST.PRIMARY_COLOR,
     borderWidth: 1 / PixelRatio.get(),
     justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   avatar: {
     borderRadius: scale(48),
     width: scale(96),
-    height: scale(96)
+    height: scale(96),
   },
   cameraIcon: {
     position: 'absolute',
     right: scale(1),
-    bottom: scale(5)
+    bottom: scale(5),
   },
   headerContainer: {
     flex: 3,
@@ -81,38 +81,38 @@ export default StyleSheet.create({
     shadowOpacity: 0.75,
     shadowRadius: scale(10),
     shadowColor: CONST.GREY_COLOR,
-    shadowOffset: { height: 5, width: 5 },
-    elevation: 5
+    shadowOffset: {height: 5, width: 5},
+    elevation: 5,
   },
   detailsCon: {
     flex: 7,
-    margin: 20
+    margin: 20,
   },
   detsContainer: {
-    flex: 1
+    flex: 1,
   },
   label: {
     fontSize: scale(12),
     color: Colors.text,
-    padding: scale(2)
+    padding: scale(2),
   },
   labelVal: {
     fontSize: scale(16),
     color: Colors.text,
-    padding: scale(2)
+    padding: scale(2),
   },
   itemContaine: {
     flexDirection: 'row',
-    paddingVertical: scale(5)
+    paddingVertical: scale(5),
   },
   iconContainer: {
     flex: 2,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 5
+    padding: 5,
   },
   textContainer: {
     flex: 8,
-    padding: 5
-  }
+    padding: 5,
+  },
 });

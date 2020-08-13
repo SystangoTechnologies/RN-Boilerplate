@@ -30,7 +30,7 @@ export const fontWeight = {
   Semibold: '600',
   Bold: '700',
   Heavy: '800',
-  Black: '900'
+  Black: '900',
 };
 
 // Font Family constants 'TODO custom fonts needs to install'
@@ -44,7 +44,7 @@ export const fontFamily = {
   RegularItalic: 'Raleway-Italic',
   Black: 'Raleway-Black',
   Josef: 'JosefinSans-Regular',
-  JosefBold: 'JosefinSans-Bold'
+  JosefBold: 'JosefinSans-Bold',
 };
 
 // CONFIGURATIONS

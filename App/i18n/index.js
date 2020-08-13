@@ -9,10 +9,10 @@ I18n.locale = 'en'; // If we do not want the framework to use the phone's locale
 
 I18n.translations = {
   en,
-  fr
+  fr,
 };
 
-export const setLocale = (locale) => {
+export const setLocale = locale => {
   I18n.locale = locale;
 };
 

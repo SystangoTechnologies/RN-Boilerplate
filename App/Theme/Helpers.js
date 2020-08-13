@@ -1,150 +1,150 @@
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
 
 export default StyleSheet.create({
   fill: {
-    flex: 1
+    flex: 1,
   },
   center: {
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   fillCenter: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   row: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   rowReverse: {
-    flexDirection: 'row-reverse'
+    flexDirection: 'row-reverse',
   },
   column: {
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   columnReverse: {
-    flexDirection: 'column-reverse'
+    flexDirection: 'column-reverse',
   },
   mainStart: {
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
   },
   mainCenter: {
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   mainEnd: {
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
   },
   mainSpaceBetween: {
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   mainSpaceAround: {
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
   },
   crossStart: {
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   crossCenter: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   crossEnd: {
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
   },
   crossStretch: {
-    alignItems: 'stretch'
+    alignItems: 'stretch',
   },
   selfStretch: {
-    alignSelf: 'stretch'
+    alignSelf: 'stretch',
   },
   rowMain: {
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   rowCross: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   rowCenter: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   colMain: {
     flexDirection: 'column',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   colCross: {
     flexDirection: 'column',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   colCenter: {
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   fillRow: {
     flex: 1,
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   fillRowReverse: {
     flex: 1,
-    flexDirection: 'row-reverse'
+    flexDirection: 'row-reverse',
   },
   fillRowMain: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   fillRowCross: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   fillRowCenter: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   fillCol: {
     flex: 1,
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   fillColReverse: {
     flex: 1,
-    flexDirection: 'column-reverse'
+    flexDirection: 'column-reverse',
   },
   fillColMain: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   fillColCross: {
     flex: 1,
     flexDirection: 'column',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   fillColCenter: {
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   textCenter: {
-    textAlign: 'center'
+    textAlign: 'center',
   },
   textJustify: {
-    textAlign: 'justify'
+    textAlign: 'justify',
   },
   textLeft: {
-    textAlign: 'left'
+    textAlign: 'left',
   },
   textRight: {
-    textAlign: 'right'
+    textAlign: 'right',
   },
   backgroundReset: {
-    backgroundColor: 'transparent'
+    backgroundColor: 'transparent',
   },
   fullWidth: {
-    width: '100%'
-  }
+    width: '100%',
+  },
 });

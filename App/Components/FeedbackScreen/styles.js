@@ -1,37 +1,37 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import {StyleSheet, Dimensions} from 'react-native';
 import Fonts from '../../Theme/Fonts';
 import ApplicationStyles from '../../Theme/ApplicationStyles';
 import scale from '../../Utils/scale';
 import Colors from '../../Theme/Colors';
 import * as CONST from '../../Utils/Constants';
 
-const { width } = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 
 export default StyleSheet.create({
   container: {
     ...ApplicationStyles.screen.container,
     flex: 1,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   title: {
     ...Fonts.style.h2,
     textAlign: 'center',
-    marginBottom: 10
+    marginBottom: 10,
   },
   text: {
     ...Fonts.style.normal,
     textAlign: 'center',
-    color: Colors.text
+    color: Colors.text,
   },
   textRate: {
     ...Fonts.style.small,
     alignSelf: 'flex-end',
     marginRight: 10,
     marginTop: 100,
-    color: 'red'
+    color: 'red',
   },
   inputContainer: {
-    marginVertical: 10
+    marginVertical: 10,
   },
   subsContainer: {
     alignSelf: 'center',
@@ -39,12 +39,12 @@ export default StyleSheet.create({
     width: scale(300),
     backgroundColor: 'black',
     justifyContent: 'center',
-    marginTop: scale(22)
+    marginTop: scale(22),
   },
   subsText: {
     color: 'white',
     fontSize: scale(16),
-    textAlign: 'center'
+    textAlign: 'center',
   },
   textInputContainer: {
     borderBottomColor: 'black',
@@ -55,11 +55,11 @@ export default StyleSheet.create({
     height: 50,
     width: width - 50,
     marginBottom: 10,
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   ratingContainer: {
     backgroundColor: 'white',
-    marginVertical: 10
+    marginVertical: 10,
   },
   headerContainer: {
     flex: 3,
@@ -72,7 +72,7 @@ export default StyleSheet.create({
     shadowOpacity: 0.75,
     shadowRadius: scale(10),
     shadowColor: CONST.GREY_COLOR,
-    shadowOffset: { height: 5, width: 5 },
-    elevation: 5
-  }
+    shadowOffset: {height: 5, width: 5},
+    elevation: 5,
+  },
 });

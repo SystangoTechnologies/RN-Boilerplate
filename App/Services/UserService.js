@@ -2,7 +2,7 @@
  * @ApiService is the single entry point for all api's calling, Here the Single fetch is written that will serve requests
  */
 
-import { Alert } from 'react-native';
+import {Alert} from 'react-native';
 import Config from '../Config';
 import * as CONST from '../Utils/Constants';
 
@@ -12,17 +12,17 @@ export function CommonFetch(params, opt) {
     const Options = {
       method: opt.method,
       URL,
-      body: params
+      body: params,
     };
 
     const ReqOptions = {
       method: Options.method,
       headers: {},
       body: params,
-      timeout: CONST.API_TIMEOUT
+      timeout: CONST.API_TIMEOUT,
     };
 
-    ReqOptions.headers['Accept'] = 'application/json';
+    ReqOptions.headers.Accept = 'application/json';
     ReqOptions.headers['Content-Type'] = 'application/json';
 
     if (ReqOptions.method === CONST.GET_API) {
@@ -39,10 +39,10 @@ export function CommonFetch(params, opt) {
           ReqOptions.timeout,
           fetch(Options.URL, ReqOptions),
           Resolve,
-          Reject
+          Reject,
         );
       })
-        .then((Response) => {
+        .then(Response => {
           console.log('Api Response -----', Response);
           if (Response.status === 200 || Response.status === 201) {
             return Response.json();
@@ -55,7 +55,7 @@ export function CommonFetch(params, opt) {
           } else if (Response.status === 401) {
             //* Not found OR Something Went Wrong
             try {
-              Response.json().then((res) => {
+              Response.json().then(res => {
                 Alert.alert(res);
                 return undefined;
               });
@@ -69,7 +69,7 @@ export function CommonFetch(params, opt) {
           }
           return undefined;
         })
-        .catch((error) => {
+        .catch(error => {
           console.log('ApiService Error1 ####', error);
           return undefined;
         });
@@ -90,22 +90,22 @@ function requestTimeoutPromise(
   waitingTime,
   promise,
   resoveInternal,
-  rejectInternal
+  rejectInternal,
 ) {
   const _timeout = setTimeout(() => {
     rejectInternal('TIMEOUT');
   }, waitingTime);
   try {
     promise.then(
-      (res) => {
+      res => {
         clearTimeout(_timeout);
         resoveInternal(res);
       },
-      (resError) => {
+      resError => {
         console.log('Timeout Error1 ####', resError);
         clearTimeout(_timeout);
         rejectInternal('Request Timeout');
-      }
+      },
     );
   } catch (error) {
     console.log('Timeout Error2 ####', error);
