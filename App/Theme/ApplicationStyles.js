@@ -1,7 +1,7 @@
 export default {
   screen: {
     container: {
-      flex: 1
-    }
-  }
+      flex: 1,
+    },
+  },
 };

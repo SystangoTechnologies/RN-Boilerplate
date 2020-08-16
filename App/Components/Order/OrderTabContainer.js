@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import OrderTabComponent from './OrderTabComponent';
 import * as userActions from '../../Actions/userActions';
 
 class OrderTabContainer extends Component {
   static navigationOptions = {
-    title: 'My Orders'
+    title: 'My Orders',
   };
 
   render() {
-    const { message, userData, userLogout } = this.props;
+    const {message, userData, userLogout} = this.props;
     return (
       <OrderTabComponent
         message={message}
@@ -20,18 +20,18 @@ class OrderTabContainer extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   message: state.UserLoginReducer.message,
-  userData: state.UserLoginReducer.user
+  userData: state.UserLoginReducer.user,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   userLogout: () => {
     return dispatch(userActions.userLogout());
-  }
+  },
 });
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(OrderTabContainer);

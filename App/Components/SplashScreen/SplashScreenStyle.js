@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
 import ApplicationStyles from '../../Theme/ApplicationStyles';
 
 export default StyleSheet.create({
@@ -7,13 +7,13 @@ export default StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
   logo: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     height: 70,
-    width: 70
-  }
+    width: 70,
+  },
 });

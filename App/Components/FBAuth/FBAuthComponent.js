@@ -1,23 +1,23 @@
 import React from 'react';
-import { View, Alert } from 'react-native';
+import {View, Alert} from 'react-native';
 import {
   LoginManager,
   LoginButton,
   AccessToken,
   GraphRequest,
-  GraphRequestManager
+  GraphRequestManager,
 } from 'react-native-fbsdk';
 import analytics from '@react-native-firebase/analytics';
 import styles from './styles';
 import NavigationService from '../../Services/NavigationService';
 
-export default function FBAuthComponent({ props }) {
+export default function FBAuthComponent({props}) {
   const get_Response_Info = (error, result) => {
     if (error) {
       Alert.alert(`Error fetching FB data: ${error.toString()}`);
     } else {
       console.log('## FB response : ', JSON.stringify(result));
-      const user = { name: 'dummy_name', password: 'dummy' };
+      const user = {name: 'dummy_name', password: 'dummy'};
       NavigationService.navigate('HomeTab');
       props.userLogin(user);
     }
@@ -33,13 +33,13 @@ export default function FBAuthComponent({ props }) {
       Alert.alert('login is cancelled.');
     } else {
       NavigationService.navigate('HomeTab');
-      AccessToken.getCurrentAccessToken().then((data) => {
-        analytics().logEvent('login_method', { type: 'fb', email: '' });
+      AccessToken.getCurrentAccessToken().then(data => {
+        analytics().logEvent('login_method', {type: 'fb', email: ''});
         console.log('## FB access token : ', data.accessToken.toString());
         const processRequest = new GraphRequest(
           '/me?fields=name,picture.type(large)',
           null,
-          get_Response_Info
+          get_Response_Info,
         );
         // Start the graph request.
         new GraphRequestManager().addRequest(processRequest).start();
@@ -58,7 +58,7 @@ export default function FBAuthComponent({ props }) {
           } else if (result.isCancelled) {
             console.log('login is cancelled.');
           } else {
-            AccessToken.getCurrentAccessToken().then((data) => {
+            AccessToken.getCurrentAccessToken().then(data => {
               console.log(data.accessToken.toString());
             });
           }

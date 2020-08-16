@@ -1,13 +1,13 @@
-import { put, call } from 'redux-saga/effects';
+import {put, call} from 'redux-saga/effects';
 import * as userActions from '../Actions/userActions';
-import { signOut } from '../Services/googleAuth';
-import { CommonFetch } from '../Services/UserService';
+import {signOut} from '../Services/googleAuth';
+import {CommonFetch} from '../Services/UserService';
 import * as CONST from '../Utils/Constants';
 
 const opts = {
   method: '',
   url: null,
-  body: null
+  body: null,
 };
 
 export function* userLogin(action) {

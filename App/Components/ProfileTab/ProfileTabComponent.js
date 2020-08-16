@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { View, Text, TouchableOpacity, Image, Alert } from 'react-native';
-import { GoogleSignin } from '@react-native-community/google-signin';
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {View, Text, TouchableOpacity, Image, Alert} from 'react-native';
+import {GoogleSignin} from '@react-native-community/google-signin';
 import ImagePicker from 'react-native-image-picker';
 import Icons from 'react-native-vector-icons/AntDesign';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
@@ -15,7 +15,7 @@ class ProfileTabComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      filePath: {}
+      filePath: {},
     };
   }
 
@@ -36,9 +36,9 @@ class ProfileTabComponent extends Component {
         // In case when not loged in from google
         await GoogleSignin.revokeAccess();
         await GoogleSignin.signOut();
-        this.setState({ user: null }); // Remember to remove the user from your app's state as well
+        this.setState({user: null}); // Remember to remove the user from your app's state as well
       } else {
-        this.setState({ user: null }); // Remember to remove the user from your app's state as well
+        this.setState({user: null}); // Remember to remove the user from your app's state as well
       }
     } catch (error) {
       console.error(error);
@@ -49,14 +49,14 @@ class ProfileTabComponent extends Component {
     const options = {
       title: I18n.t('selectImage'),
       customButtons: [
-        { name: 'customOptionKey', title: I18n.t('choosePhotoText') }
+        {name: 'customOptionKey', title: I18n.t('choosePhotoText')},
       ],
       storageOptions: {
         skipBackup: true,
-        path: 'images'
-      }
+        path: 'images',
+      },
     };
-    ImagePicker.showImagePicker(options, (response) => {
+    ImagePicker.showImagePicker(options, response => {
       console.log('Response = ', response);
 
       if (response.didCancel) {
@@ -71,7 +71,7 @@ class ProfileTabComponent extends Component {
         // You can also display the image using data:
         // let source = { uri: 'data:image/jpeg;base64,' + response.data };
         this.setState({
-          filePath: source
+          filePath: source,
         });
       }
     });
@@ -83,7 +83,7 @@ class ProfileTabComponent extends Component {
         <View style={[styles.avatar, styles.avatarContainer]}>
           {this.state.filePath.uri ? (
             <Image
-              source={{ uri: this.state.filePath.uri }}
+              source={{uri: this.state.filePath.uri}}
               style={styles.avatar}
             />
           ) : (
@@ -168,8 +168,7 @@ class ProfileTabComponent extends Component {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.subsContainer}
-            onPress={() => this.logout()}
-          >
+            onPress={() => this.logout()}>
             <Icons name="logout" size={25} color={CONST.WHITE_COLOR} />
             {/* <Text style={styles.subsText}>{I18n.t('logout')}</Text> */}
           </TouchableOpacity>
@@ -189,5 +188,5 @@ const mapDispatchToProps = () => {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(ProfileTabComponent);

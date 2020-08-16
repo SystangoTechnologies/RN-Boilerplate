@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
 import ApplicationStyles from '../../Theme/ApplicationStyles';
 import scale from '../../Utils/scale';
 import * as CONST from '../../Utils/Constants';
@@ -6,20 +6,20 @@ import * as CONST from '../../Utils/Constants';
 export default StyleSheet.create({
   container: {
     ...ApplicationStyles.screen.container,
-    flex: 1
+    flex: 1,
   },
   headerContainer: {
     flexDirection: CONST.ROW,
     justifyContent: CONST.SPACE_BETWEEN,
     alignItems: CONST.CENTER,
     height: scale(50),
-    marginTop: scale(10)
+    marginTop: scale(10),
   },
   notificationIcon: {
-    marginLeft: 10
+    marginLeft: 10,
   },
   cartIcon: {
-    marginRight: 10
+    marginRight: 10,
   },
   cartsIcon: {
     // width: scale(25),
@@ -34,7 +34,7 @@ export default StyleSheet.create({
     borderWidth: 1,
     borderColor: CONST.BORDER_COLOR_GREY_LIGHT,
     borderRadius: 10,
-    marginHorizontal: scale(10)
+    marginHorizontal: scale(10),
   },
   searchInput: {
     justifyContent: CONST.CENTER,
@@ -43,17 +43,17 @@ export default StyleSheet.create({
     fontSize: scale(20),
     fontFamily: CONST.fontFamily.Josef,
     marginHorizontal: scale(35),
-    color: CONST.GREY_DARK
+    color: CONST.GREY_DARK,
   },
   searchIcon: {
     position: CONST.POSITION_ABSOLUTE,
     top: 15,
-    left: 10
+    left: 10,
   },
   filterIcon: {
     position: CONST.POSITION_ABSOLUTE,
     top: 15,
-    right: 10
+    right: 10,
   },
   cellContainer: {
     marginTop: scale(100),
@@ -63,36 +63,36 @@ export default StyleSheet.create({
     borderRadius: 10,
     marginBottom: 20,
     paddingTop: scale(100),
-    paddingBottom: scale(20)
+    paddingBottom: scale(20),
   },
   productImage: {
     alignSelf: CONST.CENTER,
     position: CONST.POSITION_ABSOLUTE,
-    top: scale(-80)
+    top: scale(-80),
   },
   productDetailContainer: {
-    marginHorizontal: 20
+    marginHorizontal: 20,
   },
   nameContainer: {
     flexDirection: CONST.ROW,
     justifyContent: CONST.SPACE_BETWEEN,
-    alignItems: CONST.CENTER
+    alignItems: CONST.CENTER,
   },
   productName: {
     color: CONST.GREY_DARK,
     fontSize: scale(20),
-    fontFamily: CONST.fontFamily.JosefBold
+    fontFamily: CONST.fontFamily.JosefBold,
   },
   listContainer: {
     flex: 1,
     marginTop: scale(10),
-    marginBottom: scale(10)
+    marginBottom: scale(10),
   },
   productPrice: {
     marginTop: 15,
     color: CONST.PRIMARY_COLOR,
     fontSize: scale(18),
-    fontFamily: CONST.fontFamily.JosefBold
+    fontFamily: CONST.fontFamily.JosefBold,
   },
   productDescription: {
     width: scale(200),
@@ -100,9 +100,9 @@ export default StyleSheet.create({
     textAlign: 'justify',
     color: CONST.GREY_DARK,
     fontSize: scale(15),
-    fontFamily: CONST.fontFamily.Josef
+    fontFamily: CONST.fontFamily.Josef,
   },
   loadMore: {
-    alignSelf: CONST.CENTER
-  }
+    alignSelf: CONST.CENTER,
+  },
 });

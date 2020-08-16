@@ -30,7 +30,7 @@ export const fontWeight = {
   Semibold: '600',
   Bold: '700',
   Heavy: '800',
-  Black: '900'
+  Black: '900',
 };
 
 // Font Family constants 'TODO custom fonts needs to install'
@@ -44,7 +44,7 @@ export const fontFamily = {
   RegularItalic: 'Raleway-Italic',
   Black: 'Raleway-Black',
   Josef: 'JosefinSans-Regular',
-  JosefBold: 'JosefinSans-Bold'
+  JosefBold: 'JosefinSans-Bold',
 };
 
 // CONFIGURATIONS
@@ -115,11 +115,11 @@ export const BOLD = 'bold';
 
 // Image Constants
 
-export const APP_BACKGROUND = require('../../assets/Images/bg.png');
-export const APP_LOGO = require('../../assets/Images/logo.png');
-export const FB_ICON = require('../../assets/Images/fb.png');
-export const GOOGLE_PLUS_ICON = require('../../assets/Images/googlePlus.png');
-export const INSTA_ICON = require('../../assets/Images/insta.png');
+export const APP_BACKGROUND = require('../../assets/images/bg.png');
+export const APP_LOGO = require('../../assets/images/logo.png');
+export const FB_ICON = require('../../assets/images/fb.png');
+export const GOOGLE_PLUS_ICON = require('../../assets/images/googlePlus.png');
+export const INSTA_ICON = require('../../assets/images/insta.png');
 export const NOTIFICATION_ICON = require('../../assets/Home/notifications.png');
 export const CART_ICON = require('../../assets/Home/cart.png');
 export const SEARCH_ICON = require('../../assets/Home/search.png');

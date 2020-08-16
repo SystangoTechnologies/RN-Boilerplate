@@ -1,7 +1,7 @@
 import changeLanguage from '../Actions/LanguageActions';
-import { setLocale, getCurrentLocale } from './index';
+import {setLocale, getCurrentLocale} from './index';
 
-export const setCurrentLanguage = (lang) => (dispatch) => {
+export const setCurrentLanguage = lang => dispatch => {
   setLocale(lang);
   dispatch(changeLanguage(lang));
 };

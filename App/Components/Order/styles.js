@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
 import Fonts from '../../Theme/Fonts';
 import Colors from '../../Theme/Colors';
 import ApplicationStyles from '../../Theme/ApplicationStyles';
@@ -9,17 +9,17 @@ export default StyleSheet.create({
   container: {
     ...ApplicationStyles.screen.container,
     flex: 1,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   title: {
     ...Fonts.style.h2,
     textAlign: 'center',
-    marginBottom: scale(10)
+    marginBottom: scale(10),
   },
   text: {
     ...Fonts.style.normal,
     textAlign: 'center',
-    color: Colors.text
+    color: Colors.text,
   },
   headerContainer: {
     flex: 3,
@@ -32,7 +32,7 @@ export default StyleSheet.create({
     shadowOpacity: 0.75,
     shadowRadius: scale(10),
     shadowColor: CONST.GREY_COLOR,
-    shadowOffset: { height: 5, width: 5 },
-    elevation: 5
-  }
+    shadowOffset: {height: 5, width: 5},
+    elevation: 5,
+  },
 });

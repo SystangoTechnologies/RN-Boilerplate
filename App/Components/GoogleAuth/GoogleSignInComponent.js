@@ -1,9 +1,6 @@
 import React from 'react';
-import { Image, TouchableOpacity } from 'react-native';
-import {
-  GoogleSignin,
-  statusCodes
-} from '@react-native-community/google-signin';
+import {Image, TouchableOpacity} from 'react-native';
+import {GoogleSignin, statusCodes} from '@react-native-community/google-signin';
 import NavigationService from '../../Services/NavigationService';
 import * as CONST from '../../Utils/Constants';
 import styles from './styles';

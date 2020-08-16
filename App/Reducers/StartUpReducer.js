@@ -1,7 +1,7 @@
 import * as CONST from '../Utils/Constants';
 
 const initialState = {
-  data: null
+  data: null,
 };
 
 // This reducer stores the status of email verification.
@@ -10,7 +10,7 @@ export default function StartUpReducer(state = initialState, action) {
     case CONST.START_UP:
       return {
         ...state,
-        data: null
+        data: null,
       };
     default:
       return state;

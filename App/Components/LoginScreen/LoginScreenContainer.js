@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
+import React, {useEffect} from 'react';
+import {connect} from 'react-redux';
 import analytics from '@react-native-firebase/analytics';
 import * as userActions from '../../Actions/userActions';
 import * as LanguageActions from '../../Actions/LanguageActions';
 import LoginScreenComponent from './LoginScreenComponent';
 import NavigationService from '../../Services/NavigationService';
 
-const LoginScreenContainer = (props) => {
-  const { prevProps } = props;
+const LoginScreenContainer = props => {
+  const {prevProps} = props;
 
   useEffect(() => {
     analytics().setAnalyticsCollectionEnabled(true);
@@ -29,21 +29,21 @@ const LoginScreenContainer = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   userData: state.UserLoginReducer.user,
-  lang: state.LanguageReducer.language
+  lang: state.LanguageReducer.language,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  userLogin: (user) => {
+const mapDispatchToProps = dispatch => ({
+  userLogin: user => {
     return dispatch(userActions.userLogin(user));
   },
-  changeLanguage: (lang) => {
+  changeLanguage: lang => {
     return dispatch(LanguageActions.changeLanguage(lang));
-  }
+  },
 });
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(LoginScreenContainer);

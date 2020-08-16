@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, {useState, useCallback} from 'react';
 import {
   TextInput,
   TouchableOpacity,
@@ -6,7 +6,7 @@ import {
   Text,
   View,
   Image,
-  ImageBackground
+  ImageBackground,
 } from 'react-native';
 
 import analytics from '@react-native-firebase/analytics';
@@ -17,7 +17,7 @@ import showToast from '../../Utils/showToast';
 import styles from './styles';
 import * as CONST from '../../Utils/Constants';
 
-export default function LoginScreenComponent({ props, onSignupPressed }) {
+export default function LoginScreenComponent({props, onSignupPressed}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -31,11 +31,11 @@ export default function LoginScreenComponent({ props, onSignupPressed }) {
     } else if (!Validators.isValidPassword(password)) {
       showToast('Password is invalid');
     } else {
-      const user = { email, password };
+      const user = {email, password};
       analytics().logEvent('login_method', {
         type: 'email',
         email,
-        platform: Validators.platform()
+        platform: Validators.platform(),
       });
       props.userLogin(user);
     }
@@ -44,21 +44,20 @@ export default function LoginScreenComponent({ props, onSignupPressed }) {
   return (
     <ImageBackground
       source={CONST.APP_BACKGROUND}
-      style={styles.loginContainer}
-    >
+      style={styles.loginContainer}>
       <KeyboardAvoidingView style={styles.container} behavior="height" enabled>
         <Text style={styles.LoginText}>Login</Text>
         <View style={styles.inputContainer}>
           <View style={styles.emailContainer}>
             <Text style={styles.field}>Email</Text>
-            <View style={{ flex: 1 }}>
+            <View style={{flex: 1}}>
               <TextInput
                 underlineColorAndroid="transparent"
                 returnKeyType="next"
                 // placeholder="Email"
                 value={email}
                 autoCapitalize="none"
-                onChangeText={(text) => setEmail(text)}
+                onChangeText={text => setEmail(text)}
                 keyboardType="email-address"
                 style={styles.emailInput}
               />
@@ -67,7 +66,7 @@ export default function LoginScreenComponent({ props, onSignupPressed }) {
         </View>
         <View style={styles.passContainer}>
           <Text style={styles.field}>Password</Text>
-          <View style={{ flex: 1 }}>
+          <View style={{flex: 1}}>
             <TextInput
               underlineColorAndroid="transparent"
               returnKeyType="next"
@@ -75,7 +74,7 @@ export default function LoginScreenComponent({ props, onSignupPressed }) {
               value={password}
               autoCapitalize="none"
               secureTextEntry
-              onChangeText={(text) => setPassword(text)}
+              onChangeText={text => setPassword(text)}
               style={styles.emailInput}
             />
           </View>
@@ -86,8 +85,7 @@ export default function LoginScreenComponent({ props, onSignupPressed }) {
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             onPress={() => onSignupPressed()}
-            style={styles.signUp}
-          >
+            style={styles.signUp}>
             <Text style={styles.signUpText}>SIGN UP</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => onSubmit()} style={styles.login}>
@@ -107,7 +105,7 @@ export default function LoginScreenComponent({ props, onSignupPressed }) {
           <TouchableOpacity style={styles.fbSocialIcon}>
             <Image source={CONST.FB_ICON} />
           </TouchableOpacity>
-          <View style={{ alignSelf: 'center', marginBottom: 10 }}>
+          <View style={{alignSelf: 'center', marginBottom: 10}}>
             <GoogleSignInContainer props={props} />
           </View>
           {/* <TouchableOpacity style={styles.googleSocialIcon}>

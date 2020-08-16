@@ -1,12 +1,12 @@
-import { put, call } from 'redux-saga/effects';
+import {put, call} from 'redux-saga/effects';
 import * as brandActions from '../Actions/brandActions';
-import { CommonFetch } from '../Services/UserService';
+import {CommonFetch} from '../Services/UserService';
 import * as CONST from '../Utils/Constants';
 
 const opts = {
   method: '',
   url: null,
-  body: null
+  body: null,
 };
 
 export default function* getAllBrands(action) {

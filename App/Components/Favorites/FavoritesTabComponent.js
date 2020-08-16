@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { View, Text } from 'react-native';
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {View, Text} from 'react-native';
 import styles from './styles';
 
 class FavoritesTabComponent extends Component {
@@ -30,5 +30,5 @@ const mapDispatchToProps = () => {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(FavoritesTabComponent);
