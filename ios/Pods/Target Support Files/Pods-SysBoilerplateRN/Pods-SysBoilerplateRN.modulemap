@@ -1,6 +1,0 @@
-module Pods_SysBoilerplateRN {
-  umbrella header "Pods-SysBoilerplateRN-umbrella.h"
-
-  export *
-  module * { export * }
-}
