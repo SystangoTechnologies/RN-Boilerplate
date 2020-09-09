@@ -60,22 +60,6 @@ export const UPDATE_API = 'PUT';
 // Saga Constants
 export const START_UP = 'START_UP';
 
-export const USER_LOGIN = 'USER_LOGIN';
-export const USER_LOGIN_SUCCESS = 'USER_LOGIN_SUCCESS';
-export const USER_LOGIN_FAILURE = 'USER_LOGIN_FAILURE';
-
-export const USER_SIGNUP = 'USER_SIGNUP';
-export const USER_SIGNUP_SUCCESS = 'USER_SIGNUP_SUCCESS';
-export const USER_SIGNUP_FAILURE = 'USER_SIGNUP_FAILURE';
-
-export const USER_LOGOUT = 'USER_LOGOUT';
-export const USER_LOGOUT_SUCCESS = 'USER_LOGOUT_SUCCESS';
-export const USER_LOGOUT_FAILURE = 'USER_LOGOUT_FAILURE';
-
-export const USER_LOGGED_OUT_SUCCESSFULLY = 'USER_LOGGED_OUT_SUCCESSFULLY';
-export const ERROR_IN_LOGOUT = 'ERROR_IN_LOGOUT';
-export const CHANGE_LANGUAGE = 'CHANGE_LANGUAGE';
-
 /**
  * @Brands Constants
  */
@@ -112,22 +96,3 @@ export const SPACE_AROUND = 'space-around';
 export const STRETCH = 'stretch';
 export const CONTAIN = 'contain';
 export const BOLD = 'bold';
-
-// Image Constants
-
-export const APP_BACKGROUND = require('../../assets/images/bg.png');
-export const APP_LOGO = require('../../assets/images/logo.png');
-export const FB_ICON = require('../../assets/images/fb.png');
-export const GOOGLE_PLUS_ICON = require('../../assets/images/googlePlus.png');
-export const INSTA_ICON = require('../../assets/images/insta.png');
-export const NOTIFICATION_ICON = require('../../assets/Home/notifications.png');
-export const CART_ICON = require('../../assets/Home/cart.png');
-export const SEARCH_ICON = require('../../assets/Home/search.png');
-export const FILTER_ICON = require('../../assets/Home/filter.png');
-export const BOTTLE_IMAGE = require('../../assets/Home/img.png');
-export const TRIPLE_DOT = require('../../assets/Home/dots.png');
-export const HOME_TAB_ICON = require('../../assets/Home/home.png');
-export const ORDERS_TAB_ICON = require('../../assets/Home/orders.png');
-export const FAVORITES_TAB_ICON = require('../../assets/Home/favorites.png');
-export const SETTINGS_TAB_ICON = require('../../assets/Home/settings.png');
-export const LOAD_MORE_ICON = require('../../assets/Home/loadMore.png');

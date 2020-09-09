@@ -9,13 +9,6 @@
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
-#if __has_include(<React/RNSentry.h>)
-#import <React/RNSentry.h> // This is used for versions of react >= 0.40
-#else
-#import "RNSentry.h" // This is used for versions of react < 0.40
-#endif
-#import <FBSDKCoreKit/FBSDKCoreKit.h>
-#import <Firebase.h>
 
 @implementation AppDelegate
 
@@ -30,12 +23,10 @@
     }
   }
   
-  [FIRApp configure];
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
 RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"SysBoilerplateRN"
                                             initialProperties:nil];
-  [RNSentry installWithRootView:rootView];
 
   rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
 
@@ -45,9 +36,6 @@ RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   
-
-  [[FBSDKApplicationDelegate sharedInstance] application:application
-  didFinishLaunchingWithOptions:launchOptions];
   return YES;
 }
 
@@ -60,14 +48,6 @@ RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
 #endif
 }
   
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
-{
-  
-  BOOL Facebookhandled = [[FBSDKApplicationDelegate sharedInstance] application:application openURL:url sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey] annotation:options[UIApplicationOpenURLOptionsAnnotationKey]
-  ];
-  
-  return Facebookhandled;
-}
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
 }
 

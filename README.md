@@ -55,22 +55,14 @@ eslint --fix .
 
 ## Dependencies Used
 
-* react-native-fbsdk                                - ^2.0.0
-* react-native-sentry                               - ^0.43.2
+* react-native                                      - 0.63.2
 * react-navigation                                  - 4.0.10
 * redux                                             - ^2.3.2
-* react-native-image-picker                         - ^0.2.1
-* @react-native-community/google-signin             - ^4.0.3
-* @react-native-firebase/analytics                  - ^7.3.1
-* @react-native-firebase/app                        - 8.7.2
-* @react-native-firebase/messaging                  - ^7.5.0
-* react-native-google-places-autocomplete           - ^1.8.0
 
 ## Features
 
 * Generic API structure.
 * Generic Folder structure.
-* Social login.
 
 ## Folder Structure
 
@@ -80,14 +72,9 @@ assets/
 |- images
 App/
 |- Actions
-    |- LanguageActions.js 
     |- startUpActions.js
-    |- userActions.js
 |- Component
-    |- FBAuth
-    |- GoogleAuth
-    |- LoginScreen
-    |- SignupScreen
+    |- LandingScreen
     |- SplashScreen
     |- Root
 |- Config
@@ -98,19 +85,13 @@ App/
 |- Navigators
     |- AppNavigator.js
 |- Reducers
-    |- index.
-    |- LangaugeReducer.js
+    |- index.js
     |- StartUpReducer.js
-    |- UserLoginReducer.js
 |- Sagas
-    |- index.
-    |- LangaugeSaga.js
+    |- index.js
     |- StartUpSaga.js
-    |- UserLoginSaga.js
 |- Services
-    |- googleAuth.js
     |- NavigationService.js
-    |- UserService.js
 |- Stores
     |- CreateStore.js
 |- Theme
