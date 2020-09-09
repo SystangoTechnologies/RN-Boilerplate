@@ -3,10 +3,16 @@ import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/lib/integration/react';
 import createStore from './Reducers';
 import RootScreen from './Components/Root/RootScreen';
+import SplashScreen from 'react-native-splash-screen';
 
 const {store, persistor} = createStore();
 
 export default class App extends Component {
+  componentDidMount() {
+    setTimeout(() => {
+      SplashScreen.hide();
+    }, 2000);
+  }
   render() {
     return (
       <Provider store={store}>

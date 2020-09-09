@@ -30,6 +30,7 @@
     "react-native-gesture-handler": "^1.7.0",
     "react-native-root-toast": "^3.2.1",
     "react-native-screens": "^2.10.1",
+    "react-native-splash-screen": "^3.2.0",
     "react-navigation": "^4.0.10",
     "react-navigation-stack": "^1.9.4",
     "react-navigation-tabs": "^2.5.6",
