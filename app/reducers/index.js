@@ -1,6 +1,6 @@
 import {combineReducers} from 'redux';
-import configureStore from '../Stores/CreateStore';
-import rootSaga from '../Sagas';
+import configureStore from '../stores/CreateStore';
+import rootSaga from '../sagas';
 import StartUpReducer from './StartUpReducer';
 
 export default () => {

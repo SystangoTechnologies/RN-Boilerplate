@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/lib/integration/react';
-import createStore from './Reducers';
-import RootScreen from './Components/Root/RootScreen';
+import createStore from './reducers';
+import RootScreen from './components/root/RootScreen';
 import SplashScreen from 'react-native-splash-screen';
 
 const {store, persistor} = createStore();

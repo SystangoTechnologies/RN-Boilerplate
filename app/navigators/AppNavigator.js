@@ -1,6 +1,6 @@
 import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
-import LandingScreenContainer from '../Components/LandingScreen/LandingScreenContainer';
+import LandingScreenContainer from '../components/landingScreen/LandingScreenContainer';
 
 const StackNavigator = createStackNavigator(
   {

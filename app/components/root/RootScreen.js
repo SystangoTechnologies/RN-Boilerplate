@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {View, SafeAreaView} from 'react-native';
 import {connect} from 'react-redux';
-import NavigationService from '../../Services/NavigationService';
-import AppNavigator from '../../Navigators/AppNavigator';
+import NavigationService from '../../services/NavigationService';
+import AppNavigator from '../../navigators/AppNavigator';
 import styles from './RootScreenStyle';
-import startUp from '../../Actions/startUpActions';
+import startUp from '../../actions/StartUpActions';
 
 class RootScreen extends Component {
   async componentDidMount() {
