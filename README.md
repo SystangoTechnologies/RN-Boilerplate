@@ -68,33 +68,32 @@ eslint --fix .
 
 ```
 assets/
-|- Home
 |- images
-App/
-|- Actions
-    |- startUpActions.js
+app/
+|- actions
+    |- StartUpActions.js
 |- Component
     |- LandingScreen
     |- SplashScreen
     |- Root
-|- Config
+|- config
     |- index.js
 |- i18n
     |- locales
     |- index.js
-|- Navigators
+|- navigators
     |- AppNavigator.js
-|- Reducers
+|- reducers
     |- index.js
     |- StartUpReducer.js
-|- Sagas
+|- sagas
     |- index.js
     |- StartUpSaga.js
-|- Services
+|- services
     |- NavigationService.js
-|- Stores
+|- stores
     |- CreateStore.js
-|- Theme
+|- theme
     |- ApplicationStyles.js
     |- Colors.js
     |- Fonts.js
@@ -102,12 +101,12 @@ App/
     |- Images.js
     |- index.js
     |- Metrics.js
-|- Utils
-    |- asyncStorage.js
+|- utils
+    |- AsyncStorage.js
     |- Constants.js
-    |- scale.js
-    |- sendJson.js
-    |- showToast.js
+    |- Scale.js
+    |- SendJson.js
+    |- ShowToast.js
     |- Validators.js
 |- App.js
 
