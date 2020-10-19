@@ -67,3 +67,6 @@ android/gradle.properties
 # API Keys
 ios/keys.xcconfig
 android/app/keys.properties
+
+# CocoaPods
+/ios/Pods/
